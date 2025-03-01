@@ -84,34 +84,78 @@ export default function AddNewProperty() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     try {
-      const response = await fetch("/api/newproperty", {
+      // Step 1: Upload images to Cloudinary
+      const uploadedImageUrls = await Promise.all(
+        formData.photos.map(async (file) => {
+          const data = new FormData();
+          data.append("file", file);
+          data.append("upload_preset", "your_cloudinary_preset"); // Replace with your Cloudinary upload preset
+  
+          const res = await fetch(
+            "https://api.cloudinary.com/v1_1/your_cloud_name/upload", // Replace with your Cloudinary cloud name
+            {
+              method: "POST",
+              body: data,
+            }
+          );
+  
+          if (!res.ok) {
+            throw new Error("Failed to upload image to Cloudinary");
+          }
+  
+          const fileData = await res.json();
+          return fileData.secure_url; // Return the secure URL of the uploaded image
+        })
+      );
+  
+      // Step 2: Prepare data for Firebase (including Cloudinary image URLs)
+      const propertyData = {
+        ...formData,
+        photos: uploadedImageUrls, // Replace local file objects with Cloudinary URLs
+      };
+  
+      // Step 3: Send data to your server
+      const response = await fetch("/api/new-property", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(propertyData),
       });
-
+  
       if (!response.ok) {
-        throw new Error("Failed to save property");
+        throw new Error("Failed to save property to server");
       }
-
+  
       const result = await response.json();
-      toast({
-        title: "Success",
-        description: "Property saved successfully!",
-        status: "success",
-      });
+  
+      // Step 4: Upload data to Firebase (optional, if your server doesn't handle this)
+      const firebaseResponse = await fetch(
+        "https://your-firebase-database-url/properties.json", // Replace with your Firebase database URL
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(propertyData),
+        }
+      );
+  
+      if (!firebaseResponse.ok) {
+        throw new Error("Failed to save property to Firebase");
+      }
+  
+      // Success
+      toast.success("Property saved successfully! 🎉");
       console.log("Property saved:", result);
+  
+      // Redirect or reset form
+      navigate("/properties"); // Redirect to properties page
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to save property. Please try again.",
-        status: "error",
-      });
       console.error("Error saving property:", error);
+      toast.error("Failed to save property. Please try again.");
     }
   };
 

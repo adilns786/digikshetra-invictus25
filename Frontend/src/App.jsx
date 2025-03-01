@@ -27,6 +27,7 @@ import Favorites from "./pages/buyer/Favourites";
 
 import SidebarProvider from "@/components/ui/sidebar";
 import GovernmentDashboard from "./pages/govOfficer/Dashboard";
+import VerifyProperties from "./pages/govOfficer/VerifyProperty";
 
 const App = () => {
   return (
@@ -62,7 +63,7 @@ const Content = () => {
         </Route>
         <Route path="/gov" element={<LandOwnerPage />}>
           <Route index element={<GovernmentDashboard/>} />
-          <Route path="properties" element={<PropertyListings />} />
+          <Route path="verify-properties" element={<VerifyProperties />} />
           
           <Route path="properties/new" element={<AddNewProperty />} />
           <Route path="inquiries" element={<Inquiries />} />
