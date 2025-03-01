@@ -6,12 +6,12 @@ import Sidebar from "@/components/sidebar";
 const LandOwnerPage = () => {
   return (
     <div className="flex">
-      <SidebarProvider>
-        <Sidebar />
+      {/* <SidebarProvider> */}
+        {/* <Sidebar /> */}
         <main className="flex-1 p-6">
           <Outlet /> {/* This will render child components */}
         </main>
-      </SidebarProvider>
+      {/* </SidebarProvider> */}
     </div>
   );
 };
