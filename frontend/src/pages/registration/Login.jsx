@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-// import { db } from "../../Firebase/config";
-// import { doc, getDoc } from "firebase/firestore";
+import { db } from "../../Firebase/config";
+import { doc, getDoc } from "firebase/firestore";
 
 const Login = () => {
   const [email, setEmail] = useState("");
