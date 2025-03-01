@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-// import { db } from "../../Firebase/config";
-// import { doc, setDoc } from "firebase/firestore";
+import { db } from "../../Firebase/config";
+import { doc, setDoc } from "firebase/firestore";
 import { TextField, Button, MenuItem } from "@mui/material";
 import {
   Person,

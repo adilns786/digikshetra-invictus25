@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link ,useNavigate} from "react-router-dom";
 import { ArrowLeft, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,8 +20,19 @@ import {
 } from "@/components/ui/select";
 import { toast } from "sonner";
 import MapCard from "./component/MapCard";
+import { CheckCircle } from "lucide-react";
 
+const steps = [
+  "Property Details",
+  "Ownership History",
+  "Nearby Landmarks",
+  "Contact Details",
+  "Legal Compliance",
+  "Documents & Media",
+];
 export default function AddNewProperty() {
+  const [step, setStep] = useState(0);
+  const navigate = useNavigate();
   // const { toast } = useToast();
   const [formData, setFormData] = useState({
     title: "",
@@ -49,9 +60,26 @@ export default function AddNewProperty() {
     setFormData({ ...formData, [id]: value });
   };
 
-  const handleFileUpload = (e, field) => {
-    const files = Array.from(e.target.files);
-    setFormData({ ...formData, [field]: files });
+
+  const handleFileUpload = async (e, field) => {
+    const files = e.target.files;
+    const uploadedUrls = [];
+
+    for (let file of files) {
+      const data = new FormData();
+      data.append("file", file);
+      data.append("upload_preset", "your_cloudinary_preset");
+      
+      const res = await fetch("https://api.cloudinary.com/v1_1/your_cloud_name/upload", {
+        method: "POST",
+        body: data,
+      });
+
+      const fileData = await res.json();
+      uploadedUrls.push(fileData.secure_url);
+    }
+
+    setFormData({ ...formData, [field]: [...formData[field], ...uploadedUrls] });
   };
 
   const handleSubmit = async (e) => {
@@ -106,9 +134,18 @@ export default function AddNewProperty() {
         </div>
       </div>
 
+      <div className="flex justify-between">
+        {steps.map((s, index) => (
+          <div key={index} className={`text-sm font-medium ${index <= step ? "text-blue-600" : "text-gray-400"}`}>
+            {index <= step ? <CheckCircle className="inline-block mr-2" /> : "○"} {s}
+          </div>
+        ))}
+      </div>
+
       <form onSubmit={handleSubmit}>
         <div className="grid gap-6 md:grid-cols-2">
           {/* Left Column */}
+          {step === 0 && (
           <div className="space-y-6">
             <Card>
               <CardHeader>
@@ -117,6 +154,7 @@ export default function AddNewProperty() {
                   Basic information about your property
                 </CardDescription>
               </CardHeader>
+             
               <CardContent className="space-y-4">
                 <Input
                   id="title"
@@ -174,7 +212,12 @@ export default function AddNewProperty() {
                 />
               </CardContent>
             </Card>
-
+            
+          
+          </div>
+)}
+          {step === 1 && (
+            <div className="space-y-6">
             <Card>
               <CardHeader>
                 <CardTitle>Ownership History</CardTitle>
@@ -191,7 +234,11 @@ export default function AddNewProperty() {
                 />
               </CardContent>
             </Card>
+            </div>
+               )}
 
+               {step === 2 && (
+                <div className="space-y-6">
             <Card>
               <CardHeader>
                 <CardTitle>Nearby Landmarks</CardTitle>
@@ -209,9 +256,25 @@ export default function AddNewProperty() {
               </CardContent>
             </Card>
             <MapCard formData={formData} handleChange={handleChange}/>
+            <Card>
+            <CardHeader>
+              <CardTitle>GIS Mapping</CardTitle>
+              <CardDescription>Define property boundaries</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="aspect-video w-full bg-muted rounded-md flex items-center justify-center text-muted-foreground">
+                Map Interface Placeholder
+              </div>
+              <Input id="coordinates" placeholder="GPS coordinates" value={formData.coordinates} onChange={handleChange} />
+            </CardContent>
+            
+          </Card>
           </div>
+           )}
+           {step === 3 && (
+          
 
-          {/* Right Column */}
+         
           <div className="space-y-6">
             <Card>
               <CardHeader>
@@ -246,6 +309,13 @@ export default function AddNewProperty() {
                 />
               </CardContent>
             </Card>
+            </div>
+          )}
+           {step === 4 && (
+          
+
+         
+          <div className="space-y-6">
 
             <Card>
               <CardHeader>
@@ -296,7 +366,13 @@ export default function AddNewProperty() {
                 ))}
               </CardContent>
             </Card>
+            </div>
+          )}
+           {step === 5 && (
+          
 
+         
+          <div className="space-y-6">
             <Card>
               <CardHeader>
                 <CardTitle>Photos and Videos</CardTitle>
@@ -344,15 +420,16 @@ export default function AddNewProperty() {
               </CardContent>
             </Card>
           </div>
+        )}
+        
+        <div className="space-y-6">
+<div className="flex justify-between mt-6">
+          {step > 0 && <Button onClick={() => setStep(step - 1)}>Previous</Button>}
+          {step < 5 ? <Button onClick={() => setStep(step + 1)}>Next</Button> : <Button type="submit">Save </Button>}
         </div>
-
-        <div className="flex justify-end gap-4 mt-6">
-          <Button variant="outline" asChild>
-            <Link to="/landowner/properties">Cancel</Link>
-          </Button>
-          <Button type="submit">Save Property</Button>
-        </div>
-      </form>
+      </div>
+    </div>
+    </form>
     </div>
   );
 }
