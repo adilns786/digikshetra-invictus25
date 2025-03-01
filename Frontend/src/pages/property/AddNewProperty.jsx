@@ -2,11 +2,24 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowLeft, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { toast } from "sonner";
+import MapCard from "./component/MapCard";
 
 export default function AddNewProperty() {
   // const { toast } = useToast();
@@ -84,8 +97,12 @@ export default function AddNewProperty() {
           </Link>
         </Button>
         <div>
-          <h2 className="text-3xl font-bold tracking-tight">Add New Property</h2>
-          <p className="text-muted-foreground">Fill in the details to list a new property for sale</p>
+          <h2 className="text-3xl font-bold tracking-tight">
+            Add New Property
+          </h2>
+          <p className="text-muted-foreground">
+            Fill in the details to list a new property for sale
+          </p>
         </div>
       </div>
 
@@ -96,13 +113,32 @@ export default function AddNewProperty() {
             <Card>
               <CardHeader>
                 <CardTitle>Property Details</CardTitle>
-                <CardDescription>Basic information about your property</CardDescription>
+                <CardDescription>
+                  Basic information about your property
+                </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <Input id="title" placeholder="Brief description" value={formData.title} onChange={handleChange} required />
-                <Input id="location" placeholder="Address or GPS coordinates" value={formData.location} onChange={handleChange} required />
+                <Input
+                  id="title"
+                  placeholder="Brief description"
+                  value={formData.title}
+                  onChange={handleChange}
+                  required
+                />
+                <Input
+                  id="location"
+                  placeholder="Address or GPS coordinates"
+                  value={formData.location}
+                  onChange={handleChange}
+                  required
+                />
                 <div className="grid gap-4 grid-cols-2">
-                  <Select onValueChange={(value) => setFormData({ ...formData, propertyType: value })} required>
+                  <Select
+                    onValueChange={(value) =>
+                      setFormData({ ...formData, propertyType: value })
+                    }
+                    required
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder="Select type" />
                     </SelectTrigger>
@@ -112,44 +148,67 @@ export default function AddNewProperty() {
                       <SelectItem value="agricultural">Agricultural</SelectItem>
                     </SelectContent>
                   </Select>
-                  <Input id="area" type="number" placeholder="Total area (sqft)" value={formData.area} onChange={handleChange} required />
+                  <Input
+                    id="area"
+                    type="number"
+                    placeholder="Total area (sqft)"
+                    value={formData.area}
+                    onChange={handleChange}
+                    required
+                  />
                 </div>
-                <Input id="price" type="number" placeholder="Asking price" value={formData.price} onChange={handleChange} required />
-                <Textarea id="description" placeholder="Detailed description" value={formData.description} onChange={handleChange} required />
+                <Input
+                  id="price"
+                  type="number"
+                  placeholder="Asking price"
+                  value={formData.price}
+                  onChange={handleChange}
+                  required
+                />
+                <Textarea
+                  id="description"
+                  placeholder="Detailed description"
+                  value={formData.description}
+                  onChange={handleChange}
+                  required
+                />
               </CardContent>
             </Card>
 
             <Card>
               <CardHeader>
                 <CardTitle>Ownership History</CardTitle>
-                <CardDescription>Provide details of previous ownership</CardDescription>
+                <CardDescription>
+                  Provide details of previous ownership
+                </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <Textarea id="ownershipHistory" placeholder="Previous owners and transfer dates" value={formData.ownershipHistory} onChange={handleChange} />
+                <Textarea
+                  id="ownershipHistory"
+                  placeholder="Previous owners and transfer dates"
+                  value={formData.ownershipHistory}
+                  onChange={handleChange}
+                />
               </CardContent>
             </Card>
 
             <Card>
               <CardHeader>
                 <CardTitle>Nearby Landmarks</CardTitle>
-                <CardDescription>List nearby schools, hospitals, etc.</CardDescription>
+                <CardDescription>
+                  List nearby schools, hospitals, etc.
+                </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <Input id="nearbyLandmarks" placeholder="Schools, hospitals, etc." value={formData.nearbyLandmarks} onChange={handleChange} />
+                <Input
+                  id="nearbyLandmarks"
+                  placeholder="Schools, hospitals, etc."
+                  value={formData.nearbyLandmarks}
+                  onChange={handleChange}
+                />
               </CardContent>
             </Card>
-            <Card>
-            <CardHeader>
-              <CardTitle>GIS Mapping</CardTitle>
-              <CardDescription>Define property boundaries</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="aspect-video w-full bg-muted rounded-md flex items-center justify-center text-muted-foreground">
-                Map Interface Placeholder
-              </div>
-              <Input id="coordinates" placeholder="GPS coordinates" value={formData.coordinates} onChange={handleChange} />
-            </CardContent>
-          </Card>
+            <MapCard formData={formData} handleChange={handleChange}/>
           </div>
 
           {/* Right Column */}
@@ -157,22 +216,51 @@ export default function AddNewProperty() {
             <Card>
               <CardHeader>
                 <CardTitle>Contact Details</CardTitle>
-                <CardDescription>Provide contact information for inquiries</CardDescription>
+                <CardDescription>
+                  Provide contact information for inquiries
+                </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <Input id="contactName" placeholder="Contact person's name" value={formData.contactName} onChange={handleChange} required />
-                <Input id="contactPhone" type="tel" placeholder="Contact phone number" value={formData.contactPhone} onChange={handleChange} required />
-                <Input id="contactEmail" type="email" placeholder="Contact email" value={formData.contactEmail} onChange={handleChange} required />
+                <Input
+                  id="contactName"
+                  placeholder="Contact person's name"
+                  value={formData.contactName}
+                  onChange={handleChange}
+                  required
+                />
+                <Input
+                  id="contactPhone"
+                  type="tel"
+                  placeholder="Contact phone number"
+                  value={formData.contactPhone}
+                  onChange={handleChange}
+                  required
+                />
+                <Input
+                  id="contactEmail"
+                  type="email"
+                  placeholder="Contact email"
+                  value={formData.contactEmail}
+                  onChange={handleChange}
+                  required
+                />
               </CardContent>
             </Card>
 
             <Card>
               <CardHeader>
                 <CardTitle>Legal Compliance</CardTitle>
-                <CardDescription>Provide legal and environmental details</CardDescription>
+                <CardDescription>
+                  Provide legal and environmental details
+                </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <Input id="legalCompliance" placeholder="Legal or environmental restrictions" value={formData.legalCompliance} onChange={handleChange} />
+                <Input
+                  id="legalCompliance"
+                  placeholder="Legal or environmental restrictions"
+                  value={formData.legalCompliance}
+                  onChange={handleChange}
+                />
               </CardContent>
             </Card>
 
@@ -182,7 +270,12 @@ export default function AddNewProperty() {
                 <CardDescription>Upload required documents</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                {['Title Deed', 'Encumbrance Certificate', 'Property Tax Receipts', 'Identification Proofs'].map((doc, index) => (
+                {[
+                  "Title Deed",
+                  "Encumbrance Certificate",
+                  "Property Tax Receipts",
+                  "Identification Proofs",
+                ].map((doc, index) => (
                   <div key={index} className="space-y-2">
                     <label className="text-sm font-medium">{doc}</label>
                     <input
@@ -229,7 +322,9 @@ export default function AddNewProperty() {
                   </label>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Property Videos (Optional)</label>
+                  <label className="text-sm font-medium">
+                    Property Videos (Optional)
+                  </label>
                   <input
                     type="file"
                     id="videos"

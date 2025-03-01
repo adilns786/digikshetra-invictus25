@@ -7,13 +7,15 @@ import GamifiedNavbar from "./pages/landingpage/Navbar";
 import LandOwnerPage from "./pages/Landowner/LandOwnerPage";
 import Dashboard from "./pages/Landowner/Dashboard";
 import PropertyListings from "./pages/Landowner/PropertyListings";
-import AddProperty from "./pages/Landowner/AddNewProperty";
 import Inquiries from "./pages/Landowner/Enquires";
 import ProfileManagement from "./pages/Landowner/Profile";
 import HelpSupport from "./pages/Landowner/Help";
 import Sidebar from "@/components/sidebar";
 // import { Button } from "@/components/ui/button";
 import LandingPage from "./pages/home/home";
+import PropertyDetails from "./pages/property/property";
+import { Toaster } from "@/components/ui/sonner";
+import AddNewProperty from "./pages/property/AddNewProperty";
 
 const App = () => {
   return (
@@ -40,13 +42,15 @@ const Content = () => {
         <Route path="/landowner" element={<LandOwnerPage />}>
           <Route index element={<Dashboard />} />
           <Route path="properties" element={<PropertyListings />} />
-          <Route path="properties/new" element={<AddProperty />} />
+          <Route path="propertydetail/:id" element={<PropertyDetails />} />
+          <Route path="properties/new" element={<AddNewProperty />} />
           <Route path="inquiries" element={<Inquiries />} />
           <Route path="profile" element={<ProfileManagement />} />
           <Route path="help" element={<HelpSupport />} />
         </Route>
       </Routes>
-   
+      <Toaster />
+
       </div>
     
   );
