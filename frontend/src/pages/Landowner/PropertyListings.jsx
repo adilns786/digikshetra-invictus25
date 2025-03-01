@@ -81,7 +81,7 @@ export default function PropertyListings() {
               </div>
               <div className="mt-4 flex justify-end">
                 <button className="btn">
-                  <Link to={`/properties/${i}`}>View Details</Link>
+                  <Link to={`/landowner/propertydetail/${i}`}>View Details</Link>
                 </button>
               </div>
             </div>
