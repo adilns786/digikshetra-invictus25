@@ -1,3 +1,4 @@
+
 import { Link } from "react-router-dom";
 import { Calculator, Heart, Search, Star } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -5,12 +6,12 @@ import { Button } from "@/components/ui/button";
 
 export default function BuyerDashboard() {
   return (
-    <div className="space-y-6">
+    <div className="space-y-8 p-4 md:p-6">
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
           <h2 className="text-3xl font-bold tracking-tight">Buyer Dashboard</h2>
           <p className="text-muted-foreground">
-            Welcome to your buyer portal! Find and manage your property interests.
+            Welcome to your buyer portal! Find and manage your property interests effortlessly.
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -23,7 +24,7 @@ export default function BuyerDashboard() {
         </div>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
         {[{
           title: "Find Properties",
           description: "Search for your dream property",
@@ -49,16 +50,16 @@ export default function BuyerDashboard() {
           link: "/buyer/reviews",
           bgClass: "bg-gradient-to-br from-amber-100 to-amber-50 dark:from-amber-900/20 dark:to-amber-800/10"
         }].map((item, i) => (
-          <Card key={i} className={item.bgClass}>
+          <Card key={i} className={`p-4 shadow-md rounded-xl transition-transform transform hover:scale-105 ${item.bgClass}`}>
             <CardHeader className="pb-2">
-              <CardTitle className="text-lg">{item.title}</CardTitle>
+              <CardTitle className="text-lg font-semibold">{item.title}</CardTitle>
               <CardDescription>{item.description}</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="flex justify-between items-center">
                 {item.icon}
                 <Button asChild size="sm" variant="outline">
-                  <Link to={item.link}>Go</Link>
+                  <Link to={item.link}>Explore</Link>
                 </Button>
               </div>
             </CardContent>
@@ -69,7 +70,7 @@ export default function BuyerDashboard() {
       <h3 className="text-xl font-semibold mt-8">Featured Properties</h3>
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {["Riverside Villa", "Mountain View Cottage", "Downtown Apartment"].map((name, i) => (
-          <Card key={i} className="overflow-hidden">
+          <Card key={i} className="overflow-hidden shadow-lg rounded-xl">
             <div className="aspect-video w-full bg-muted relative">
               <div className="absolute inset-0 flex items-center justify-center text-muted-foreground">
                 Property Image
