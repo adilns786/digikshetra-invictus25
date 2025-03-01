@@ -1,7 +1,5 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-// import { db } from "../../Firebase/config";
-// import { doc, setDoc } from "firebase/firestore";
 import { TextField, Button, MenuItem } from "@mui/material";
 import {
   Person,
@@ -22,6 +20,8 @@ const Signup = () => {
     password: "",
     confirmPassword: "",
     role: "Landowner",
+    dob: "", // Add DOB field
+    panNumber: "", // Add PAN field
   });
 
   const navigate = useNavigate();
@@ -33,32 +33,65 @@ const Signup = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Validate passwords
     if (formData.password !== formData.confirmPassword) {
       alert("Passwords do not match!");
       return;
     }
 
+    // Prepare data for verification
+    const verificationData = {
+      name: formData.name,
+      dob: formData.dob, // Add DOB
+      phone_number: formData.phone,
+      aadhaar_number: formData.aadhaarId,
+      pan_number: formData.panNumber, // Add PAN
+    };
+
     try {
-      await setDoc(doc(db, "users", formData.email), {
-        name: formData.name,
-        phone: formData.phone,
-        email: formData.email,
-        location: formData.location,
-        aadhaarId: formData.aadhaarId,
-        role: formData.role,
-        password: formData.password,
+      // Send data to the server for verification
+      const response = await fetch("http://localhost:8000/api-auth/verify/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(verificationData),
       });
-      alert("Signup successful! Welcome to DigiKshetra.");
-      navigate("/login");
+
+      if (!response.ok) {
+        throw new Error("Verification failed");
+      }
+
+      const result = await response.json();
+
+      // Handle verification response
+      if (result.status === "success") {
+        alert("Verification successful! Details fully verified ✅");
+        // Proceed with signup logic (e.g., save to Firebase or other backend)
+        // await setDoc(doc(db, "users", formData.email), {
+        //   name: formData.name,
+        //   phone: formData.phone,
+        //   email: formData.email,
+        //   location: formData.location,
+        //   aadhaarId: formData.aadhaarId,
+        //   role: formData.role,
+        //   password: formData.password,
+        // });
+        alert("Signup successful! Welcome to DigiKshetra.");
+        navigate("/login");
+      } else {
+        alert("Verification failed. Please check your details.");
+      }
     } catch (error) {
-      console.error("Error signing up: ", error);
-      alert("Signup failed. Try again!");
+      console.error("Error during verification: ", error);
+      alert("Verification failed. Try again!");
     }
   };
 
   return (
     <div className="flex min-h-screen justify-center items-center py-20 bg-gray-100">
-      <div className="bg-white  lg:flex-row flex-col lg:p-8 p-6 rounded-lg shadow-lg flex lg:w-3/4 h-4/5">
+      <div className="bg-white lg:flex-row flex-col lg:p-8 p-6 rounded-lg shadow-lg flex lg:w-3/4 h-4/5">
         <div className="lg:w-1/2 w-full items-center justify-center lg:p-6">
           <h1 className="text-3xl font-bold mb-4 text-green-700">
             DigiKshetra - Secure Land Ownership
@@ -72,6 +105,16 @@ const Signup = () => {
               label="Full Name"
               name="name"
               value={formData.name}
+              onChange={handleChange}
+              fullWidth
+              margin="normal"
+              required
+              InputProps={{ startAdornment: <Person /> }}
+            />
+            <TextField
+              label="Date of Birth (YYYY-MM-DD)"
+              name="dob"
+              value={formData.dob}
               onChange={handleChange}
               fullWidth
               margin="normal"
@@ -121,15 +164,22 @@ const Signup = () => {
             >
               <MenuItem value="Landowner">Landowner</MenuItem>
               <MenuItem value="Buyer">Buyer</MenuItem>
-              {/* <MenuItem value="Government Official">
-                Government Official
-              </MenuItem> */}
               <MenuItem value="Register Officer">Register Officer</MenuItem>
             </TextField>
             <TextField
               label="Aadhaar ID"
               name="aadhaarId"
               value={formData.aadhaarId}
+              onChange={handleChange}
+              fullWidth
+              margin="normal"
+              required
+              InputProps={{ startAdornment: <Gavel /> }}
+            />
+            <TextField
+              label="PAN Number"
+              name="panNumber"
+              value={formData.panNumber}
               onChange={handleChange}
               fullWidth
               margin="normal"
