@@ -5,7 +5,7 @@ import Sidebar from "@/components/sidebar";
 
 const LandOwnerPage = () => {
   return (
-    <div className="flex">
+    <div className="flex-1">
       {/* <SidebarProvider> */}
         {/* <Sidebar /> */}
         <main className="flex-1 p-6">

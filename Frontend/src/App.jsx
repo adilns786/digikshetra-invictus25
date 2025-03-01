@@ -95,8 +95,8 @@ const Content = () => {
 
   return (
     <SidebarProvider>
-    <div className="flex">
-      {showSidebar && <Sidebar />} {/* Show sidebar for buyers & landowners */}
+    <div className="flex w-full h-screen">
+      {showSidebar && <Sidebar className="w-64"/>} {/* Show sidebar for buyers & landowners */}
       <Routes>
         {/* Public Routes */}
         <Route path="/" element={<LandingPage />} />
