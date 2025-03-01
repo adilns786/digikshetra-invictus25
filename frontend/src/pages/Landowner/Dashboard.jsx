@@ -14,7 +14,7 @@ const Dashboard = () => {
         </div>
         <div className="flex items-center gap-2">
           <Button asChild>
-            <Link to="/properties/new">
+            <Link to="/landowner/properties/new">
               <PlusCircle className="mr-2 h-4 w-4" />
               Add New Property
             </Link>

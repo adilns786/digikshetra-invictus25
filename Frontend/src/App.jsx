@@ -17,9 +17,9 @@ import LandingPage from "./pages/home/home";
 
 const App = () => {
   return (
-    
+    <BrowserRouter>
       <Content />
-   
+    </BrowserRouter>
   );
 };
 
