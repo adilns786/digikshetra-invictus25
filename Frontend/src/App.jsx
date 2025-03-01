@@ -2,7 +2,7 @@ import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
 import React from "react";
 import Login from "./pages/registration/Login";
 import Signup from "./pages/registration/Signup";
-import LandingPage from "./pages/landingpage/LandingPage";
+// import LandingPage from "./pages/landingpage/LandingPage";
 import GamifiedNavbar from "./pages/landingpage/Navbar";
 import LandOwnerPage from "./pages/Landowner/LandOwnerPage";
 import Dashboard from "./pages/Landowner/Dashboard";
@@ -12,18 +12,20 @@ import Inquiries from "./pages/Landowner/Enquires";
 import ProfileManagement from "./pages/Landowner/Profile";
 import HelpSupport from "./pages/Landowner/Help";
 import Sidebar from "@/components/sidebar";
+// import { Button } from "@/components/ui/button";
+import LandingPage from "./pages/home/home";
 
 const App = () => {
   return (
-    <BrowserRouter>
+    
       <Content />
-    </BrowserRouter>
+   
   );
 };
 
 const Content = () => {
   const location = useLocation();
-  const isLandownerPage = location.pathname.startsWith("/landowner");
+  // const isLandownerPage = location.pathname.startsWith("/landowner");
 
   return (
     <div className="flex">
