@@ -12,6 +12,8 @@ import {
   Heart,
   Star,
   Search,
+  Shield,
+  CheckCircle,
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
@@ -36,42 +38,63 @@ const Sidebar = () => {
   const toggleCollapse = () => {
     setIsCollapsed(!isCollapsed);
   };
-
-  const menuItems = [
+  const govItems = [
     {
       label: "Dashboard",
       icon: <Home className="h-5 w-5" />,
-      path: "/dashboard",
+      path: "/gov",
+    },
+    {
+      label: "Verify Properties",
+      icon: <Shield className="h-5 w-5" />,
+      path: "/gov/verify-properties",
+    },
+    {
+      label: "Verified Properties",
+      icon: <CheckCircle className="h-5 w-5" />,
+      path: "/gov/verified-properties",
+    },
+    {
+      label: "User Reports",
+      icon: <User className="h-5 w-5" />,
+      path: "/gov/user-reports",
+    },
+  ];
+  const userItems = [
+    {
+      label: "Dashboard",
+      icon: <Home className="h-5 w-5" />,
+      path: "/landowner",
     },
     {
       label: "Property Listings",
       icon: <ListFilter className="h-5 w-5" />,
-      path: "/properties",
+      path: "/landowner/properties",
     },
     {
       label: "Add New Property",
       icon: <PlusCircle className="h-5 w-5" />,
-      path: "/properties/new",
+      path: "/landowner/properties/new",
     },
     {
       label: "Favorites",
       icon: <Heart className="h-5 w-5" />,
-      path: "/favorites",
+      path: "/landowner/favorites",
     },
     {
       label: "Mortgage Calculator",
       icon: <Calculator className="h-5 w-5" />,
-      path: "/calculator",
+      path: "/landowner/calculator",
     },
     {
       label: "Reviews & Ratings",
       icon: <Star className="h-5 w-5" />,
-      path: "/reviews",
+      path: "/landowner/reviews",
     },
     {
       label: "Inquiries",
       icon: <MessageSquare className="h-5 w-5" />,
-      path: "/inquiries",
+      path: "/landowner/inquiries",
     },
     {
       label: "Profile Management",
@@ -114,7 +137,24 @@ const Sidebar = () => {
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {menuItems.map((item, index) => (
+              {location.pathname.startsWith("/landowner") && userItems.map((item, index) => (
+                <SidebarMenuItem key={index}>
+                  <SidebarMenuButton
+                    asChild
+                    className={`flex items-center gap-3 p-3 hover:bg-muted rounded ${
+                      location.pathname === item.path ? "bg-muted" : ""
+                    }`}
+                  >
+                    <Link to={item.path}>
+                      {item.icon}
+                      {!isCollapsed && <span>{item.label}</span>}
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+            <SidebarMenu>
+              {location.pathname.startsWith("/gov") && govItems.map((item, index) => (
                 <SidebarMenuItem key={index}>
                   <SidebarMenuButton
                     asChild
