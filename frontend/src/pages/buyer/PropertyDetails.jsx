@@ -13,7 +13,7 @@ export default function PropertyDetails()  {
     <div className="space-y-6">
       <div className="flex items-center gap-4">
         <Button variant="outline" size="icon" asChild>
-          <Link href="/buyer/search">
+          <Link to="/buyer/search">
             <ArrowLeft className="h-4 w-4" />
             <span className="sr-only">Back</span>
           </Link>
@@ -356,7 +356,7 @@ export default function PropertyDetails()  {
               </div>
 
               <Button asChild className="w-full mt-4">
-                <Link href="/buyer/calculator">Detailed Calculator</Link>
+                <Link to="/buyer/calculator">Detailed Calculator</Link>
               </Button>
             </CardContent>
           </Card>
@@ -401,7 +401,7 @@ export default function PropertyDetails()  {
                 </div>
                 <div className="mt-4 flex justify-end">
                   <Button asChild>
-                    <Link href={`/buyer/property/${i + 3}`}>View Details</Link>
+                    <Link to={`/buyer/property/${i + 3}`}>View Details</Link>
                   </Button>
                 </div>
               </CardContent>

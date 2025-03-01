@@ -144,3 +144,19 @@ export default function SearchProperties() {
     </div>
   );
 }
+
+// const [properties, setProperties] = useState([]);
+
+// // Fetch properties from Firestore
+// useEffect(() => {
+//   const fetchProperties = async () => {
+//     const querySnapshot = await getDocs(collection(db, "properties"));
+//     const fetchedProperties = querySnapshot.docs.map((doc) => ({
+//       id: doc.id,
+//       ...doc.data(),
+//     }));
+//     setProperties(fetchedProperties);
+//   };
+
+//   fetchProperties();
+// }, []);
