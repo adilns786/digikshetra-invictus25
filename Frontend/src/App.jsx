@@ -26,6 +26,7 @@ import ReviewsAndRatings from "./pages/buyer/ReviewsAndRatings";
 import Favorites from "./pages/buyer/Favourites";
 
 import SidebarProvider from "@/components/ui/sidebar";
+import GovernmentDashboard from "./pages/govOfficer/Dashboard";
 
 const App = () => {
   return (
@@ -37,12 +38,12 @@ const App = () => {
 
 const Content = () => {
   const location = useLocation();
-  const showSidebar = location.pathname.startsWith("/landowner") || location.pathname.startsWith("/buyer");
+  const showSidebar = location.pathname.startsWith("/landowner") || location.pathname.startsWith("/gov");
 
   return (
     <SidebarProvider>
-    <div className="flex">
-      {showSidebar && <Sidebar />} {/* Show sidebar for buyers & landowners */}
+    <div className="flex w-full h-screen">
+      {showSidebar && <Sidebar className="w-64"/>} {/* Show sidebar for buyers & landowners */}
       <Routes>
         {/* Public Routes */}
         <Route path="/" element={<LandingPage />} />
@@ -59,7 +60,15 @@ const Content = () => {
           <Route path="profile" element={<ProfileManagement />} />
           <Route path="help" element={<HelpSupport />} />
         </Route>
-
+        <Route path="/gov" element={<LandOwnerPage />}>
+          <Route index element={<GovernmentDashboard/>} />
+          <Route path="properties" element={<PropertyListings />} />
+          
+          <Route path="properties/new" element={<AddNewProperty />} />
+          <Route path="inquiries" element={<Inquiries />} />
+          <Route path="profile" element={<ProfileManagement />} />
+          <Route path="help" element={<HelpSupport />} />
+        </Route>
         {/* Buyer Routes */}
         <Route path="/buyer" element={<BuyerDashboard />} />
         <Route path="/buyer/search" element={<SearchProperties />} />
