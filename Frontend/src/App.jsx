@@ -75,10 +75,10 @@ const Content = () => {
         {/* Buyer Routes */}
         <Route path="/buyer" element={<BuyerDashboard />} />
         <Route path="/buyer/search" element={<SearchProperties />} />
-        <Route path="/buyer/favorites" element={<Favorites />} />
-        <Route path="/buyer/property/:id" element={<PropertyDetails />} />
-        <Route path="/buyer/calculator" element={<MortgageCalculator />} />
-        <Route path="/buyer/reviews" element={<ReviewsAndRatings />} />
+        <Route path="/landowner/favorites" element={<Favorites />} />
+        <Route path="/landowner/property/:id" element={<PropertyDetails />} />
+        <Route path="/landowner/calculator" element={<MortgageCalculator />} />
+        <Route path="/landowner/reviews" element={<ReviewsAndRatings />} />
       </Routes>
       <Toaster />
 
