@@ -42,6 +42,7 @@ export default function PropertyDetails() {
   const [property, setProperty] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [blockchainData, setBlockchainData] = useState([]);
 
   // Fetch property data from Firestore
   useEffect(() => {
@@ -82,7 +83,20 @@ export default function PropertyDetails() {
       );
     }
   };
-
+  useEffect(() => {
+    const fetchBlockchainData = async () => {
+      try {
+        const response = await fetch("http://127.0.0.1:8000/ledgers/blockchain/");
+        const data = await response.json();
+        if (data.blockchain) {
+          setBlockchainData(data.blockchain.flat());
+        }
+      } catch (error) {
+        console.error("Error fetching blockchain data:", error);
+      }
+    };
+    fetchBlockchainData();
+  }, []);
   // Toggle wishlist
   const toggleWishlist = () => {
     setIsWishlisted(!isWishlisted);

@@ -1,5 +1,3 @@
-
-
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Edit, MapPin, PlusCircle, Trash2, Search } from "lucide-react";
@@ -54,6 +52,20 @@ export default function PropertyListings() {
       property.propertyType?.toLowerCase().includes(search.toLowerCase())
   );
 
+  // Handle property deletion
+  const handleDelete = async (propertyId) => {
+    try {
+      await deleteDoc(doc(db, "PropertyData", propertyId));
+      setProperties((prevProperties) =>
+        prevProperties.filter((property) => property.id !== propertyId)
+      );
+      toast.success("Property deleted successfully!");
+    } catch (error) {
+      console.error("Error deleting property:", error);
+      toast.error("Failed to delete property.");
+    }
+  };
+
   return (
     <div className="space-y-6 p-6 bg-gray-50 min-h-screen">
       {/* Header */}
@@ -62,7 +74,10 @@ export default function PropertyListings() {
           <h2 className="text-4xl font-bold text-gray-800">🏡 Property Listings</h2>
           <p className="text-gray-600">Manage all your properties in one place.</p>
         </div>
-        <Link to="/landowner/properties/new" className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center transition">
+        <Link
+          to="/landowner/properties/new"
+          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center transition"
+        >
           <PlusCircle className="mr-2 h-5 w-5" /> Add New Property
         </Link>
       </div>
@@ -87,10 +102,18 @@ export default function PropertyListings() {
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {filteredProperties.length > 0 ? (
             filteredProperties.map((property) => (
-              <div key={property.id} className="bg-white shadow-lg rounded-xl overflow-hidden transition transform hover:scale-105">
+              <Link
+                key={property.id}
+                to={`/property/${property.id}`} // Route to details page
+                className="bg-white shadow-lg rounded-xl overflow-hidden transition transform hover:scale-105"
+              >
                 <div className="aspect-video bg-gray-200 flex items-center justify-center text-gray-400 text-lg">
                   {property.propertyImages && property.propertyImages.length > 0 ? (
-                    <img src={property.propertyImages[0]} alt={property.title} className="w-full h-full object-cover" />
+                    <img
+                      src={property.propertyImages[0]}
+                      alt={property.title}
+                      className="w-full h-full object-cover"
+                    />
                   ) : (
                     "🏠 No Image Available"
                   )}
@@ -104,10 +127,20 @@ export default function PropertyListings() {
                       </p>
                     </div>
                     <div className="flex gap-2">
-                      <Link to={`/landowner/property/edit/${property.id}`} className="text-blue-600 hover:text-blue-800">
+                      <Link
+                        to={`/landowner/property/edit/${property.id}`}
+                        className="text-blue-600 hover:text-blue-800"
+                        onClick={(e) => e.stopPropagation()} // Prevent card click
+                      >
                         <Edit className="h-5 w-5" />
                       </Link>
-                      <button onClick={() => handleDelete(property.id)} className="text-red-600 hover:text-red-800">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation(); // Prevent card click
+                          handleDelete(property.id);
+                        }}
+                        className="text-red-600 hover:text-red-800"
+                      >
                         <Trash2 className="h-5 w-5" />
                       </button>
                     </div>
@@ -128,7 +161,7 @@ export default function PropertyListings() {
                     </div>
                   </div>
                 </div>
-              </div>
+              </Link>
             ))
           ) : (
             <p className="text-center text-gray-500">No approved properties found.</p>
@@ -143,7 +176,10 @@ export default function PropertyListings() {
           {blockchainData.length > 0 &&
             blockchainData.map((block, index) =>
               block.dlid ? (
-                <div key={index} className="bg-white shadow-lg rounded-xl overflow-hidden transition transform hover:scale-105">
+                <div
+                  key={index}
+                  className="bg-white shadow-lg rounded-xl overflow-hidden transition transform hover:scale-105"
+                >
                   <div className="p-5">
                     <div className="flex items-start justify-between">
                       <div>

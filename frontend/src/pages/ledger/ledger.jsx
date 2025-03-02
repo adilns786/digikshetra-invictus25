@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom"; // Import Link for navigation
+import { Link, useNavigate } from "react-router-dom"; // Import Link and useNavigate for navigation
 
 // Navbar component
 const Navbar = () => (
@@ -17,6 +17,7 @@ const Navbar = () => (
 
 export default function BlockchainProperties() {
   const [blockchainData, setBlockchainData] = useState([]);
+  const navigate = useNavigate(); // Hook for programmatic navigation
 
   // Fetch blockchain properties
   useEffect(() => {
@@ -36,6 +37,18 @@ export default function BlockchainProperties() {
     fetchBlockchainData();
   }, []);
 
+  // Handle "Purchase" button click
+  const handlePurchase = (dlid, e) => {
+    e.stopPropagation(); // Prevent the card's onClick event from firing
+    navigate(`/blockchain-details/${dlid}`); // Redirect to the details page
+  };
+
+  // Handle "Consult" button click
+  const handleConsult = (e) => {
+    e.stopPropagation(); // Prevent the card's onClick event from firing
+    navigate("/consult"); // Redirect to a temporary route
+  };
+
   return (
     <div className="bg-gray-900 min-h-screen flex flex-col">
       {/* Navbar */}
@@ -52,10 +65,13 @@ export default function BlockchainProperties() {
             {blockchainData.length > 0 ? (
               blockchainData.map((block, index) =>
                 block.dlid ? (
-                  <Link
-                    to={`/blockchain-details/${block.dlid}`} // Use Link for navigation
+                  <div
                     key={index}
-                    className="bg-gray-800 shadow-lg rounded-xl overflow-hidden transition transform hover:scale-105"
+                    className="bg-gray-800 shadow-lg rounded-xl overflow-hidden transition transform hover:scale-105 cursor-pointer"
+                    onClick={() => {
+                      // Navigate to details page when the card is clicked
+                      navigate(`/blockchain-details/${block.dlid}`);
+                    }}
                   >
                     <div className="p-5">
                       <div className="flex items-start justify-between">
@@ -92,8 +108,23 @@ export default function BlockchainProperties() {
                           <p className="text-lg font-bold">${block.price}</p>
                         </div>
                       </div>
+                      {/* Buttons */}
+                      <div className="flex gap-2 mt-4">
+                        <button
+                          onClick={(e) => handlePurchase(block.dlid, e)}
+                          className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition"
+                        >
+                          Purchase
+                        </button>
+                        <button
+                          onClick={handleConsult}
+                          className="w-full bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-lg transition"
+                        >
+                          Consult
+                        </button>
+                      </div>
                     </div>
-                  </Link>
+                  </div>
                 ) : null
               )
             ) : (
