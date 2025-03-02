@@ -55,9 +55,9 @@ const Sidebar = () => {
       path: "/gov/verified-properties",
     },
     {
-      label: "User Reports",
+      label: "Verify Transactions",
       icon: <User className="h-5 w-5" />,
-      path: "/gov/user-reports",
+      path: "/gov/verify-transactions",
     },
   ];
   const userItems = [

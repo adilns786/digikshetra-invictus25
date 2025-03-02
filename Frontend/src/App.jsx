@@ -36,6 +36,7 @@ import UserProperties from "./pages/Landowner/MyProperty";
 import Navbar from "./components/Navbar";
 import MapPlotting from "./components/MapPlotting";
 import LawyerDashboard from "./pages/lawyer/LawyerDashboard";
+import VerifyTransactions from "./pages/govOfficer/VerifyTransactions";
 
 const PrivateRoute = ({ children, role }) => {
   const userRole = sessionStorage.getItem("role");
@@ -106,6 +107,7 @@ const Content = () => {
           <Route index element={<GovernmentDashboard/>} />
           <Route path="verify-properties" element={<VerifyProperties />} />
           <Route path="verified-properties" element={<VerifiedProperties />} />
+          <Route path="Verify-transactions" element={<VerifyTransactions />} />
           
           <Route path="properties/new" element={<AddNewProperty />} />
           <Route path="inquiries" element={<Inquiries />} />
