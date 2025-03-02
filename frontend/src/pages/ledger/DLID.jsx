@@ -12,7 +12,6 @@ import {
 } from "@/components/ui/dialog"; // Import shadcn components
 import { Button } from "@/components/ui/button"; // Import shadcn button
 
-
 // Error Boundary Component for catching errors
 class ErrorBoundary extends React.Component {
   constructor(props) {
@@ -38,6 +37,7 @@ class ErrorBoundary extends React.Component {
     return this.props.children;
   }
 }
+
 // Blockchain Details page component
 const BlockchainDetails = () => {
   const { dlid } = useParams();
@@ -116,11 +116,20 @@ const BlockchainDetails = () => {
     try {
       const cloudinaryUrl = await uploadToCloudinary(file);
 
+      // Extract ledger data (genesis block)
+      const genesisBlock = ledger.find((block) => block.dlid === dlid);
+
       // Create or update Firestore transaction document
       const transactionRef = doc(db, "transactions", dlid);
       await setDoc(
         transactionRef,
         {
+          dlid: dlid, // Add DLID
+          owner_name: genesisBlock?.owner_name, // Add owner name
+          area: genesisBlock?.area, // Add area
+          landmark: genesisBlock?.landmark, // Add landmark
+          price: genesisBlock?.price, // Add price
+          property_type: genesisBlock?.property_type, // Add property type
           [field]: {
             url: cloudinaryUrl,
             approved: false, // Default to false
