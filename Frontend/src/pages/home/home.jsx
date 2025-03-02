@@ -15,7 +15,7 @@ const LandingPage = () => {
   return (
     <div className="flex min-h-screen w-full flex-col bg-gray-900 text-white">
       {/* Header */}
-      <header className="sticky top-0 z-50 w-full border-b border-gray-700 bg-gray-800/90 backdrop-blur supports-[backdrop-filter]:bg-gray-800/60">
+      {/* <header className="sticky top-0 z-50 w-full border-b border-gray-700 bg-gray-800/90 backdrop-blur supports-[backdrop-filter]:bg-gray-800/60">
         <div className="container flex h-16 items-center justify-between mx-auto px-4">
           <div className="flex items-center gap-2">
             <Database className="h-6 w-6 text-blue-400" />
@@ -64,7 +64,7 @@ const LandingPage = () => {
             </Link>
           </div>
         </div>
-      </header>
+      </header> */}
 
       {/* Main Content */}
       <main className="flex-1">

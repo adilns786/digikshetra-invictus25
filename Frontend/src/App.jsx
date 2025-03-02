@@ -33,6 +33,7 @@ import VerifiedProperties from "./pages/govOfficer/VerifiedProperties";
 import Ledger from "./pages/ledger/ledger";
 import BlockDetails from "./pages/ledger/DLID";
 import UserProperties from "./pages/Landowner/MyProperty";
+import Navbar from "./components/Navbar";
 
 const PrivateRoute = ({ children, role }) => {
   const userRole = sessionStorage.getItem("role");
@@ -53,11 +54,18 @@ const Content = () => {
     location.pathname.startsWith("/landowner") ||
     location.pathname.startsWith("/gov");
 
+  const showNavbar = !(
+    location.pathname.startsWith("/landowner") ||
+    location.pathname.startsWith("/gov") ||
+    location.pathname.startsWith("/ledger")
+  );
+
   return (
     <SidebarProvider>
       <div className="flex w-full h-screen">
         {showSidebar && <Sidebar className="w-64" />}
-        {/* Show sidebar for buyers & landowners */}
+        {/* Show navbar except for specific routes like ledger, landowner, and government routes */}
+        {showNavbar && <Navbar />}
         <Routes>
           {/* Public Routes */}
           <Route path="/" element={<LandingPage />} />
@@ -68,7 +76,7 @@ const Content = () => {
           <Route
             path="landowner"
             element={
-              <PrivateRoute role="Landowner">
+              <PrivateRoute role="User">
                 <LandOwnerPage />
               </PrivateRoute>
             }
