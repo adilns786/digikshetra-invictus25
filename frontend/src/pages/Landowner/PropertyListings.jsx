@@ -33,7 +33,7 @@ export default function PropertyListings() {
           <h2 className="text-4xl font-bold text-gray-800">🏡 Property Listings</h2>
           <p className="text-gray-600">Manage all your properties in one place.</p>
         </div>
-        <Link to="/properties/new" className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center transition">
+        <Link to="/landowner/properties/new" className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center transition">
           <PlusCircle className="mr-2 h-5 w-5" /> Add New Property
         </Link>
       </div>

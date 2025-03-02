@@ -99,12 +99,12 @@ const Sidebar = () => {
     {
       label: "Profile Management",
       icon: <User className="h-5 w-5" />,
-      path: "/profile",
+      path: "landowner/profile",
     },
     {
       label: "Help & Support",
       icon: <Settings className="h-5 w-5" />,
-      path: "/help",
+      path: "landowner/help",
     },
   ];
 
