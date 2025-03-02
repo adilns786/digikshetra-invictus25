@@ -1,5 +1,5 @@
 
-import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
+import { BrowserRouter, Route, Routes, useLocation,Navigate } from "react-router-dom";
 import React from "react";
 import Login from "./pages/registration/Login";
 import Signup from "./pages/registration/Signup";
@@ -30,6 +30,12 @@ import GovernmentDashboard from "./pages/govOfficer/Dashboard";
 import VerifyProperties from "./pages/govOfficer/VerifyProperty";
 import ImageUpload from "./pages/property/component/ImageUpload";
 
+
+const PrivateRoute = ({ children, role }) => {
+  const userRole = sessionStorage.getItem("role");
+  return userRole === role ? children : <Navigate to="/login" />;
+};
+
 const App = () => {
   return (
     <BrowserRouter>
@@ -53,17 +59,18 @@ const Content = () => {
         <Route path="/signup" element={<Signup />} />
 
         {/* Landowner Routes */}
+        <Route path="properties/new" element={<AddNewProperty />} />
+
         <Route path="/landowner" element={<LandOwnerPage />}>
           <Route index element={<Dashboard />} />
           <Route path="properties" element={<PropertyListings />} />
-          <Route path="properties/new/media" element={<ImageUpload />} />
+          <Route path="properties/new/media/:id" element={<ImageUpload />} />
 
-          <Route path="properties/new" element={<AddNewProperty />} />
           <Route path="inquiries" element={<Inquiries />} />
           <Route path="profile" element={<ProfileManagement />} />
           <Route path="help" element={<HelpSupport />} />
         </Route>
-        <Route path="/gov" element={<LandOwnerPage />}>
+        <Route path="/gov" element={<PrivateRoute role="Register Officer"><LandOwnerPage /></PrivateRoute>}>
           <Route index element={<GovernmentDashboard/>} />
           <Route path="verify-properties" element={<VerifyProperties />} />
           
@@ -75,10 +82,10 @@ const Content = () => {
         {/* Buyer Routes */}
         <Route path="/buyer" element={<BuyerDashboard />} />
         <Route path="/buyer/search" element={<SearchProperties />} />
-        <Route path="/buyer/favorites" element={<Favorites />} />
-        <Route path="/buyer/property/:id" element={<PropertyDetails />} />
-        <Route path="/buyer/calculator" element={<MortgageCalculator />} />
-        <Route path="/buyer/reviews" element={<ReviewsAndRatings />} />
+        <Route path="/landowner/favorites" element={<Favorites />} />
+        <Route path="/landowner/property/:id" element={<PropertyDetails />} />
+        <Route path="/landowner/calculator" element={<MortgageCalculator />} />
+        <Route path="/landowner/reviews" element={<ReviewsAndRatings />} />
       </Routes>
       <Toaster />
 

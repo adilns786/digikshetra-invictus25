@@ -59,63 +59,86 @@ class LandRecordViewSet(viewsets.ModelViewSet):
         global blockchain
         blockchain = Blockchain()
 
+       
     @action(detail=False, methods=['post'], parser_classes=[MultiPartParser, FormParser])
     def upload_media(self, request):
         """
-        Handle file uploads for photos and videos.
-        Supports multiple files.
+        Handle file uploads for photos, videos, and documents.
+        Supports multiple files and categorizes them by type.
         """
         try:
-            uploaded_files = request.FILES.getlist('files')  # Use getlist to handle multiple files
-            
+            # Extract upload type from the request (e.g., 'documents', 'property-images')
+            upload_type = request.data.get('type')
+            if not upload_type:
+                return Response({"error": "Upload type is required"}, status=status.HTTP_400_BAD_REQUEST)
+    
+            # Validate upload type
+            allowed_types = ['documents', 'property-images']
+            if upload_type not in allowed_types:
+                return Response({"error": f"Invalid upload type: {upload_type}"}, status=status.HTTP_400_BAD_REQUEST)
+    
+            # Extract files from the request
+            uploaded_files = request.FILES.getlist('files')
             if not uploaded_files:
                 return Response({"error": "No files provided"}, status=status.HTTP_400_BAD_REQUEST)
-            
-            # Create media directory if it doesn't exist
-            media_dir = os.path.join(settings.MEDIA_ROOT, 'uploads')
+    
+            # Define allowed file types and size limits based on upload type
+            if upload_type == 'documents':
+                allowed_mime_types = ['application/pdf', 'image/jpeg', 'image/png']
+                max_file_size = 10 * 1024 * 1024  # 10MB limit for documents
+            elif upload_type == 'property-images':
+                allowed_mime_types = ['image/jpeg', 'image/png']
+                max_file_size = 50 * 1024 * 1024  # 50MB limit for property images
+    
+            # Create media directory for the upload type if it doesn't exist
+            media_dir = os.path.join(settings.MEDIA_ROOT, 'uploads', upload_type)
             os.makedirs(media_dir, exist_ok=True)
-            
+    
             uploaded_file_urls = []
-            
+    
             for uploaded_file in uploaded_files:
-                # Validate file type and size (example: allow only images and videos)
-                allowed_types = ['image/jpeg', 'image/png', 'video/mp4']
-                if uploaded_file.content_type not in allowed_types:
-                    return Response({"error": f"Unsupported file type: {uploaded_file.content_type}"}, status=status.HTTP_400_BAD_REQUEST)
-                
-                if uploaded_file.size > 50 * 1024 * 1024:  # 50MB limit
-                    return Response({"error": f"File size exceeds limit: {uploaded_file.name}"}, status=status.HTTP_400_BAD_REQUEST)
-                
+                # Validate file type
+                if uploaded_file.content_type not in allowed_mime_types:
+                    return Response(
+                        {"error": f"Unsupported file type for {upload_type}: {uploaded_file.content_type}"},
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+    
+                # Validate file size
+                if uploaded_file.size > max_file_size:
+                    return Response(
+                        {"error": f"File size exceeds limit for {upload_type}: {uploaded_file.name}"},
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+    
                 # Generate a unique filename to prevent overwriting
                 file_extension = os.path.splitext(uploaded_file.name)[1]
                 unique_filename = f"{uuid4()}{file_extension}"
-                
+    
                 # Save file to the filesystem
                 file_path = os.path.join(media_dir, unique_filename)
                 with open(file_path, 'wb+') as destination:
                     for chunk in uploaded_file.chunks():
                         destination.write(chunk)
-                
+    
                 # Generate the URL for the file
-                file_url = f"{settings.MEDIA_URL}uploads/{unique_filename}"
+                file_url = f"{settings.MEDIA_URL}uploads/{upload_type}/{unique_filename}"
                 uploaded_file_urls.append({
                     "fileName": unique_filename,
                     "fileUrl": file_url,
                     "fileSize": uploaded_file.size,
                     "fileType": uploaded_file.content_type
                 })
-            
+    
             return Response({
                 "message": "Files uploaded successfully",
                 "files": uploaded_file_urls
             }, status=status.HTTP_201_CREATED)
-            
+    
         except Exception as e:
             return Response({
                 "error": str(e)
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
 # Add a separate view for saving multiple media files
 @api_view(['POST'])
 def save_media(request):

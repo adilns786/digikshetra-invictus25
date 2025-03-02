@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { db } from "../../Firebase/config"// Update import path
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -30,9 +32,11 @@ const steps = [
   "Legal Compliance",
 ];
 
+
 export default function AddNewProperty() {
   const [step, setStep] = useState(0);
   const navigate = useNavigate();
+  const [submitting, setSubmitting] = useState(false);
 
   const [formData, setFormData] = useState({
     title: "",
@@ -50,17 +54,15 @@ export default function AddNewProperty() {
     contactPhone: "",
     contactEmail: "",
     legalCompliance: "",
+    Approved: false,
   });
 
-  // Load saved form data from localStorage when the component mounts
+  // Load/save to localStorage (keep if you need draft functionality)
   useEffect(() => {
     const savedFormData = localStorage.getItem("propertyFormData");
-    if (savedFormData) {
-      setFormData(JSON.parse(savedFormData));
-    }
+    if (savedFormData) setFormData(JSON.parse(savedFormData));
   }, []);
 
-  // Save form data to localStorage whenever it changes
   useEffect(() => {
     localStorage.setItem("propertyFormData", JSON.stringify(formData));
   }, [formData]);
@@ -72,40 +74,39 @@ export default function AddNewProperty() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setSubmitting(true);
 
     try {
-      // Prepare data for the server
+      // Firebase document structure
       const propertyData = {
         ...formData,
+        metadata: {
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp(),
+          status: "draft",
+        },
+        // Convert string numbers to numbers
+        area: Number(formData.area),
+        price: Number(formData.price),
       };
 
-      // Simulate sending data to the server
-      // const response = await fetch("/api/new-property", {
-      //   method: "POST",
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //   },
-      //   body: JSON.stringify(propertyData),
-      // });
+      // Add document to Firestore
+      const docRef = await addDoc(collection(db, "PropertyData"), propertyData);
 
-      // if (!response.ok) {
-      //   throw new Error("Failed to save property to server");
-      // }
-
-      // const result = await response.json();
-
-      // Clear localStorage after successful submission
+      // Clear local storage
       localStorage.removeItem("propertyFormData");
 
-      // Success
       toast.success("Property saved successfully! 🎉");
-      console.log("Property saved:", propertyData);
+      console.log("Document written with ID: ", docRef.id);
 
-      // Redirect or reset form
-      navigate("/landowner/properties/new/media"); // Redirect to properties page
+      // Redirect to media upload page with new document ID
+      navigate(`/landowner/properties/new/media/${docRef.id}`);
+
     } catch (error) {
       console.error("Error saving property:", error);
       toast.error("Failed to save property. Please try again.");
+    } finally {
+      setSubmitting(false);
     }
   };
 
