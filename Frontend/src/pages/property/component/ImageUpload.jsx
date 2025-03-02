@@ -1,13 +1,12 @@
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Upload } from "lucide-react";
 import { toast } from "sonner";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { db } from "../../../Firebase/config"; // Update import path
 import { doc, updateDoc } from "firebase/firestore";
+import { useState } from "react";
 
 const ImageUpload = () => {
- const navigate = useNavigate
   const { id } = useParams(); // Extract property ID from the URL
   const [documents, setDocuments] = useState({
     saleDeed: null,
@@ -30,6 +29,7 @@ const ImageUpload = () => {
     setPropertyImages(selectedFiles);
   };
 
+
   const uploadToCloudinary = async (file) => {
     const data = new FormData();
     data.append("file", file);
@@ -50,7 +50,7 @@ const ImageUpload = () => {
         throw new Error(errorData.error?.message || "Failed to upload to Cloudinary");
       }
       const fileData = await res.json();
-      // console.log(fileData.secure_url)
+      console.log(fileData.secure_url)
 
       return fileData.secure_url; // Return the secure URL of the uploaded file
     } catch (error) {
@@ -68,7 +68,7 @@ const ImageUpload = () => {
     const formData = new FormData();
     formData.append("files", file); // Append the file
     formData.append("type", type); // Append the upload type
-    // console.log(documents)
+    console.log(documents)
     try {
       const response = await fetch(`http://localhost:8000/api/upload/`, {
         method: "POST",
@@ -134,6 +134,19 @@ const ImageUpload = () => {
           const cloudinaryUrl = await uploadToCloudinary(file);
           await uploadToServer(file, "property-images");
           return cloudinaryUrl;
+
+
+
+
+
+
+
+
+
+
+
+
+
         } catch (error) {
           console.error("Error uploading property image:", error);
           await uploadToServer(file, "property-images");
@@ -176,7 +189,6 @@ const ImageUpload = () => {
       toast.error("Failed to upload files. Please try again.");
     } finally {
       setIsUploading(false);
-      navigate("/landowner/properties");
     }
   };
 

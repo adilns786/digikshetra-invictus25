@@ -282,7 +282,7 @@ const LandingPage = () => {
         {/* Contact Section */}
         <section
           id="contact"
-          className="py-20 bg-background bg-gradient-to-b from-gray-800 to-gray-900"
+          className=" py-20 bg-background bg-gradient-to-b from-gray-800 to-gray-900"
         >
           <div className="container mx-auto px-4">
             <div className="text-center mb-16">

@@ -441,7 +441,7 @@ export default function AddNewProperty() {
                   Previous
                 </Button>
               )}
-              {step < 5 ? (
+              {step < 4 ? (
                 <Button type="button" onClick={() => setStep(step + 1)}>
                   Next
                 </Button>
