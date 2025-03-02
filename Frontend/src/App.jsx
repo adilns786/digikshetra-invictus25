@@ -30,6 +30,7 @@ import GovernmentDashboard from "./pages/govOfficer/Dashboard";
 import VerifyProperties from "./pages/govOfficer/VerifyProperty";
 import ImageUpload from "./pages/property/component/ImageUpload";
 import VerifiedProperties from "./pages/govOfficer/VerifiedProperties";
+import UserProperties from "./pages/Landowner/MyProperty";
 
 
 const PrivateRoute = ({ children, role }) => {
@@ -60,10 +61,11 @@ const Content = () => {
         <Route path="/signup" element={<Signup />} />
 
         {/* Landowner Routes */}
-        <Route path="properties/new" element={<AddNewProperty />} />
 
         <Route path="/landowner" element={<LandOwnerPage />}>
           <Route index element={<Dashboard />} />
+          <Route path="properties/new" element={<AddNewProperty />} />
+          <Route path="myproperty" element={<UserProperties />} />
           <Route path="properties" element={<PropertyListings />} />
           <Route path="properties/new/media/:id" element={<ImageUpload />} />
 

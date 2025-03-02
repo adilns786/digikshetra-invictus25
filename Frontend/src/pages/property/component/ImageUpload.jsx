@@ -49,7 +49,7 @@ const ImageUpload = () => {
         throw new Error(errorData.error?.message || "Failed to upload to Cloudinary");
       }
       const fileData = await res.json();
-      console.log(fileData.secure_url)
+      // console.log(fileData.secure_url)
 
       return fileData.secure_url; // Return the secure URL of the uploaded file
     } catch (error) {
@@ -67,7 +67,7 @@ const ImageUpload = () => {
     const formData = new FormData();
     formData.append("files", file); // Append the file
     formData.append("type", type); // Append the upload type
-    console.log(documents)
+    // console.log(documents)
     try {
       const response = await fetch(`http://localhost:8000/api/upload/`, {
         method: "POST",

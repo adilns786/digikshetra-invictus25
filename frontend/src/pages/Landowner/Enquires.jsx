@@ -19,7 +19,7 @@ export default function InquiriesAndOffers() {
   const filteredInquiries = activeTab === "All" ? inquiries : inquiries.filter(inquiry => inquiry.type === activeTab);
 
   return (
-    <div className="lg:pl-50 ">
+    <div className="">
     <div className="space-y-6 p-6 bg-gray-50 min-h-screen ">
       {/* Header */}
       <div>

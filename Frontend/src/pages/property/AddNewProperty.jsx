@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { db } from "../../Firebase/config"// Update import path
+import { db } from "../../Firebase/config"; // Update import path
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -32,7 +32,6 @@ const steps = [
   "Legal Compliance",
 ];
 
-
 export default function AddNewProperty() {
   const [step, setStep] = useState(0);
   const navigate = useNavigate();
@@ -61,6 +60,17 @@ export default function AddNewProperty() {
   useEffect(() => {
     const savedFormData = localStorage.getItem("propertyFormData");
     if (savedFormData) setFormData(JSON.parse(savedFormData));
+
+    // Set contactName and contactEmail from sessionStorage
+    const name = sessionStorage.getItem("name");
+    const email = sessionStorage.getItem("email");
+    if (name && email) {
+      setFormData((prevData) => ({
+        ...prevData,
+        contactName: name,
+        contactEmail: email,
+      }));
+    }
   }, []);
 
   useEffect(() => {
@@ -73,64 +83,63 @@ export default function AddNewProperty() {
   };
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
-  setSubmitting(true);
+    e.preventDefault();
+    setSubmitting(true);
 
-  try {
-    // Firebase document structure
-    const propertyData = {
-      ...formData,
-      metadata: {
-        createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp(),
-        status: "draft",
-      },
-      // Convert string numbers to numbers
-      area: Number(formData.area),
-      price: Number(formData.price),
-    };
-
-    // Step 1: Add document to Firestore
-    const docRef = await addDoc(collection(db, "PropertyData"), propertyData);
-    console.log("Document written with ID: ", docRef.id);
-
-    // Step 2: Send data to your server at /predict (only if Firebase upload is successful)
     try {
-      const response = await fetch('http://localhost:8000/api/predict/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      // Firebase document structure
+      const propertyData = {
+        ...formData,
+        metadata: {
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp(),
+          status: "draft",
         },
-        body: JSON.stringify(propertyData), // Send the same data to your server
-      });
+        // Convert string numbers to numbers
+        area: Number(formData.area),
+        price: Number(formData.price),
+      };
 
-      if (!response.ok) {
-        throw new Error('Failed to send data to server');
+      // Step 1: Add document to Firestore
+      const docRef = await addDoc(collection(db, "PropertyData"), propertyData);
+      console.log("Document written with ID: ", docRef.id);
+
+      // Step 2: Send data to your server at /predict (only if Firebase upload is successful)
+      try {
+        const response = await fetch("http://localhost:8000/api/predict/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(propertyData), // Send the same data to your server
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to send data to server");
+        }
+
+        const result = await response.json();
+        console.log("Server response:", result);
+      } catch (serverError) {
+        console.error("Error sending data to server:", serverError);
+        // Handle server error (e.g., log it or show a warning)
+        toast.warning("Property saved to Firebase, but failed to send to server.");
       }
 
-      const result = await response.json();
-      console.log('Server response:', result);
-    } catch (serverError) {
-      console.error('Error sending data to server:', serverError);
-      // Handle server error (e.g., log it or show a warning)
-      toast.warning('Property saved to Firebase, but failed to send to server.');
+      // Clear local storage
+      localStorage.removeItem("propertyFormData");
+
+      toast.success("Property saved successfully! 🎉");
+
+      // Redirect to media upload page with new document ID
+      navigate(`/landowner/properties/new/media/${docRef.id}`);
+    } catch (firebaseError) {
+      console.error("Error saving property to Firebase:", firebaseError);
+      toast.error("Failed to save property. Please try again.");
+    } finally {
+      setSubmitting(false);
     }
-
-    // Clear local storage
-    localStorage.removeItem("propertyFormData");
-
-    toast.success("Property saved successfully! 🎉");
-
-    // Redirect to media upload page with new document ID
-    navigate(`/landowner/properties/new/media/${docRef.id}`);
-
-  } catch (firebaseError) {
-    console.error("Error saving property to Firebase:", firebaseError);
-    toast.error("Failed to save property. Please try again.");
-  } finally {
-    setSubmitting(false);
-  }
-};
+  };
 
   return (
     <div className="space-y-6">
@@ -142,9 +151,7 @@ export default function AddNewProperty() {
           </Link>
         </Button>
         <div>
-          <h2 className="text-3xl font-bold tracking-tight">
-            Add New Property
-          </h2>
+          <h2 className="text-3xl font-bold tracking-tight">Add New Property</h2>
           <p className="text-muted-foreground">
             Fill in the details to list a new property for sale
           </p>
@@ -283,23 +290,6 @@ export default function AddNewProperty() {
                 </CardContent>
               </Card>
               <MapCard formData={formData} handleChange={handleChange} />
-              <Card>
-                <CardHeader>
-                  <CardTitle>GIS Mapping</CardTitle>
-                  <CardDescription>Define property boundaries</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="aspect-video w-full bg-muted rounded-md flex items-center justify-center text-muted-foreground">
-                    Map Interface Placeholder
-                  </div>
-                  <Input
-                    id="coordinates"
-                    placeholder="GPS coordinates"
-                    value={formData.coordinates}
-                    onChange={handleChange}
-                  />
-                </CardContent>
-              </Card>
             </div>
           )}
           {step === 3 && (
@@ -317,6 +307,7 @@ export default function AddNewProperty() {
                     placeholder="Contact person's name"
                     value={formData.contactName}
                     onChange={handleChange}
+                    readOnly // Make the field read-only
                     required
                   />
                   <Input
@@ -333,6 +324,7 @@ export default function AddNewProperty() {
                     placeholder="Contact email"
                     value={formData.contactEmail}
                     onChange={handleChange}
+                    readOnly // Make the field read-only
                     required
                   />
                 </CardContent>
@@ -367,7 +359,7 @@ export default function AddNewProperty() {
                   Previous
                 </Button>
               )}
-              {step < 4 ? (
+              {step < 5 ? (
                 <Button type="button" onClick={() => setStep(step + 1)}>
                   Next
                 </Button>
