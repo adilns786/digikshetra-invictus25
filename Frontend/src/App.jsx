@@ -53,12 +53,13 @@ const Content = () => {
         <Route path="/signup" element={<Signup />} />
 
         {/* Landowner Routes */}
+        <Route path="properties/new" element={<AddNewProperty />} />
+
         <Route path="/landowner" element={<LandOwnerPage />}>
           <Route index element={<Dashboard />} />
           <Route path="properties" element={<PropertyListings />} />
-          <Route path="properties/new/media" element={<ImageUpload />} />
+          <Route path="properties/new/media/:id" element={<ImageUpload />} />
 
-          <Route path="properties/new" element={<AddNewProperty />} />
           <Route path="inquiries" element={<Inquiries />} />
           <Route path="profile" element={<ProfileManagement />} />
           <Route path="help" element={<HelpSupport />} />
