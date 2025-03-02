@@ -34,6 +34,7 @@ import Ledger from "./pages/ledger/ledger";
 import BlockDetails from "./pages/ledger/DLID";
 import UserProperties from "./pages/Landowner/MyProperty";
 import Navbar from "./components/Navbar";
+import MapPlotting from "./components/MapPlotting";
 
 const PrivateRoute = ({ children, role }) => {
   const userRole = sessionStorage.getItem("role");
@@ -91,7 +92,15 @@ const Content = () => {
             <Route path="help" element={<HelpSupport />} />
           </Route>
 
-          {/* Government Officer Routes */}
+          <Route path="/landowner" element={<LandOwnerPage />}>
+            <Route index element={<Dashboard />} />
+            <Route path="properties" element={<PropertyListings />} />
+            <Route path="properties/new/media/:id" element={<ImageUpload />} />
+            <Route path="properties/new" element={<AddNewProperty />} />
+            <Route path="inquiries" element={<Inquiries />} />
+            <Route path="profile" element={<ProfileManagement />} />
+            <Route path="help" element={<HelpSupport />} />
+          </Route>
           <Route
             path="/gov"
             element={
@@ -106,14 +115,14 @@ const Content = () => {
               path="verified-properties"
               element={<VerifiedProperties />}
             />
+
             <Route path="properties/new" element={<AddNewProperty />} />
             <Route path="inquiries" element={<Inquiries />} />
             <Route path="profile" element={<ProfileManagement />} />
             <Route path="help" element={<HelpSupport />} />
           </Route>
-
           {/* Buyer Routes */}
-          <Route path="/buyer" element={<BuyerDashboard />} />
+          <Route path="landowner/buyer" element={<BuyerDashboard />} />
           <Route path="/buyer/search" element={<SearchProperties />} />
           <Route path="/landowner/favorites" element={<Favorites />} />
           <Route path="/property/:id" element={<PropertyDetails />} />
@@ -123,10 +132,14 @@ const Content = () => {
           />
           <Route path="/landowner/reviews" element={<ReviewsAndRatings />} />
 
-          {/* Ledger Routes */}
-          <Route path="ledger" element={<Ledger />} />
-          <Route path="/blockchain-details/:dlid" element={<BlockDetails />} />
+          <Route path="/map" element={<MapPlotting />} />
         </Routes>
+        <Toaster />
+
+        {/* Ledger Routes */}
+        <Route path="ledger" element={<Ledger />} />
+        <Route path="/blockchain-details/:dlid" element={<BlockDetails />} />
+
         <Toaster />
       </div>
     </SidebarProvider>

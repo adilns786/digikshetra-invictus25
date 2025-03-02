@@ -2,11 +2,12 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Upload } from "lucide-react";
 import { toast } from "sonner";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { db } from "../../../Firebase/config"; // Update import path
 import { doc, updateDoc } from "firebase/firestore";
 
 const ImageUpload = () => {
+ const navigate = useNavigate
   const { id } = useParams(); // Extract property ID from the URL
   const [documents, setDocuments] = useState({
     saleDeed: null,
@@ -175,6 +176,7 @@ const ImageUpload = () => {
       toast.error("Failed to upload files. Please try again.");
     } finally {
       setIsUploading(false);
+      navigate("/landowner/properties");
     }
   };
 
