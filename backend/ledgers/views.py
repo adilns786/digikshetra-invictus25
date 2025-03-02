@@ -1,3 +1,4 @@
+# views.py - Use Redis to handle ledger data
 import redis
 import json
 import datetime
@@ -56,7 +57,6 @@ def create_genesis_block(request):
     else:
         return JsonResponse({'error': 'Invalid request method'}, status=405)
 
-
 @csrf_exempt
 def add_transaction(request):
     if request.method == 'POST':
@@ -81,8 +81,8 @@ def add_transaction(request):
             
             # Create the transaction block
             transaction_block = {
-                "sender": sender,
-                "receiver": receiver,
+                "seller": sender,
+                "buyer": receiver,
                 "amount": amount,
                 "timestamp": str(datetime.datetime.now())
             }
@@ -101,7 +101,6 @@ def add_transaction(request):
     else:
         return JsonResponse({'error': 'Invalid request method'}, status=405)
 
-
 @csrf_exempt
 def get_blockchain(request):
     if request.method == 'GET':
@@ -118,3 +117,24 @@ def get_blockchain(request):
 
     else:
         return JsonResponse({'error': 'Invalid request method'}, status=405)
+
+@csrf_exempt
+def get_ledger_by_dlid(request, dlid):
+    try:
+        ledger = redis_client.get(f"ledger:{dlid}")
+        if not ledger:
+            return JsonResponse({'error': 'Ledger not found'}, status=404)
+        return JsonResponse({'ledger': json.loads(ledger)}, status=200)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+    
+@csrf_exempt
+def clear_blockchain(request):
+    try:
+        # Clear all keys in the Redis store for blockchain
+        redis_client.flushdb()  # This deletes all keys from the database
+        
+        return JsonResponse({'message': 'Blockchain cleared successfully.'}, status=200)
+    
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
