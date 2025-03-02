@@ -1,5 +1,5 @@
 
-import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
+import { BrowserRouter, Route, Routes, useLocation,Navigate } from "react-router-dom";
 import React from "react";
 import Login from "./pages/registration/Login";
 import Signup from "./pages/registration/Signup";
@@ -29,6 +29,12 @@ import SidebarProvider from "@/components/ui/sidebar";
 import GovernmentDashboard from "./pages/govOfficer/Dashboard";
 import VerifyProperties from "./pages/govOfficer/VerifyProperty";
 import ImageUpload from "./pages/property/component/ImageUpload";
+
+
+const PrivateRoute = ({ children, role }) => {
+  const userRole = sessionStorage.getItem("role");
+  return userRole === role ? children : <Navigate to="/login" />;
+};
 
 const App = () => {
   return (
@@ -63,7 +69,7 @@ const Content = () => {
           <Route path="profile" element={<ProfileManagement />} />
           <Route path="help" element={<HelpSupport />} />
         </Route>
-        <Route path="/gov" element={<LandOwnerPage />}>
+        <Route path="/gov" element={<PrivateRoute role="Register Officer"><LandOwnerPage /></PrivateRoute>}>
           <Route index element={<GovernmentDashboard/>} />
           <Route path="verify-properties" element={<VerifyProperties />} />
           
