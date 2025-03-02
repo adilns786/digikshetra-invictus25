@@ -81,11 +81,11 @@ const Signup = () => {
   };
 
   return (
-    <div className="flex justify-center h-fit items-center py-5 bg-gradient-to-b from-gray-800 to-gray-900">
+    <div className="flex justify-center h-fit items-center py-20 bg-gradient-to-b from-gray-800 to-gray-900">
       <div className="bg-white lg:flex-row flex-col lg:p-8 p-6 rounded-lg shadow-lg flex lg:w-3/4">
         <div className="lg:w-1/2 w-full items-center justify-center lg:p-6">
           <h1 className="text-3xl font-bold mb-4 text-blue-700">
-            DigiKshetra - Secure Land Ownership
+            DigiKshetra - Secure Land Ownership 
           </h1>
           <p className="mb-6 text-gray-600">
             Join DigiKshetra for secure, transparent, and fraud-free land transactions.

@@ -6,7 +6,7 @@ import video from "../../assets/Untitled video - Made with Clipchamp.mp4";
 
 function Banner() {
   return (
-    <div className="relative h-[90vh] w-full overflow-hidden">
+    <div className="relative h-[100vh] w-full overflow-hidden">
       {/* Background Video */}
       <video
         className="absolute inset-0 w-full h-full object-cover"

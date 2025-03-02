@@ -9,12 +9,12 @@ export default function InquiriesAndOffers() {
   const [activeTab, setActiveTab] = useState("All");
 
   const inquiries = [
-    { id: 1, type: "Inquiry", name: "John Smith", daysAgo: 2, property: "Riverside Villa", message: "I'm interested in this property and would like to schedule a viewing. Please let me know when you're available." },
-    { id: 2, type: "Offer", name: "Jane Doe", daysAgo: 1, property: "Mountain View Cottage", amount: 220000, message: "I would like to make an offer on this property. I'm ready to proceed with the purchase if you accept." },
-    { id: 3, type: "Inquiry", name: "Michael Brown", daysAgo: 3, property: "Downtown Apartment", message: "Can you provide more details about the amenities and location?" },
-    { id: 4, type: "Offer", name: "Emily Clark", daysAgo: 5, property: "Seaside Bungalow", amount: 340000, message: "I'm making an offer on this property. Let me know your decision." },
-    { id: 5, type: "Inquiry", name: "Daniel Lee", daysAgo: 4, property: "Countryside Farmhouse", message: "I'd like to visit this property. When would be a good time?" }
-  ];
+    { id: 1, type: "Inquiry", name: "Rahul Sharma", daysAgo: 2, property: "Riverside Villa", message: "I'm interested in this property and would like to schedule a viewing. Please let me know when you're available." },
+    { id: 2, type: "Offer", name: "Priya Singh", daysAgo: 1, property: "Mountain View Cottage", amount: 22000000, message: "I would like to make an offer on this property. I'm ready to proceed with the purchase if you accept." },
+    { id: 3, type: "Inquiry", name: "Amit Kumar", daysAgo: 3, property: "Downtown Apartment", message: "Can you provide more details about the amenities and location?" },
+    { id: 4, type: "Offer", name: "Neha Gupta", daysAgo: 5, property: "Seaside Bungalow", amount: 34000000, message: "I'm making an offer on this property. Let me know your decision." },
+    { id: 5, type: "Inquiry", name: "Vikram Patel", daysAgo: 4, property: "Countryside Farmhouse", message: "I'd like to visit this property. When would be a good time?" }
+   ];
 
   const filteredInquiries = activeTab === "All" ? inquiries : inquiries.filter(inquiry => inquiry.type === activeTab);
 
