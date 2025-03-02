@@ -92,15 +92,7 @@ const Content = () => {
             <Route path="help" element={<HelpSupport />} />
           </Route>
 
-          <Route path="/landowner" element={<LandOwnerPage />}>
-            <Route index element={<Dashboard />} />
-            <Route path="properties" element={<PropertyListings />} />
-            <Route path="properties/new/media/:id" element={<ImageUpload />} />
-            <Route path="properties/new" element={<AddNewProperty />} />
-            <Route path="inquiries" element={<Inquiries />} />
-            <Route path="profile" element={<ProfileManagement />} />
-            <Route path="help" element={<HelpSupport />} />
-          </Route>
+          {/* Government Officer Routes */}
           <Route
             path="/gov"
             element={
@@ -115,12 +107,12 @@ const Content = () => {
               path="verified-properties"
               element={<VerifiedProperties />}
             />
-
             <Route path="properties/new" element={<AddNewProperty />} />
             <Route path="inquiries" element={<Inquiries />} />
             <Route path="profile" element={<ProfileManagement />} />
             <Route path="help" element={<HelpSupport />} />
           </Route>
+
           {/* Buyer Routes */}
           <Route path="landowner/buyer" element={<BuyerDashboard />} />
           <Route path="/buyer/search" element={<SearchProperties />} />
@@ -133,13 +125,11 @@ const Content = () => {
           <Route path="/landowner/reviews" element={<ReviewsAndRatings />} />
 
           <Route path="/map" element={<MapPlotting />} />
+
+          {/* Ledger Routes */}
+          <Route path="ledger" element={<Ledger />} />
+          <Route path="/blockchain-details/:dlid" element={<BlockDetails />} />
         </Routes>
-        <Toaster />
-
-        {/* Ledger Routes */}
-        <Route path="ledger" element={<Ledger />} />
-        <Route path="/blockchain-details/:dlid" element={<BlockDetails />} />
-
         <Toaster />
       </div>
     </SidebarProvider>

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { Database } from "lucide-react";
 
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -20,7 +21,12 @@ const Navbar = () => {
       <div className="container mx-auto flex justify-between items-center">
         {/* Logo */}
         <div className="text-2xl font-bold transition-all duration-300 hover:text-gray-300">
-          <Link to="/">Land Record System</Link>
+          <Link to="/">
+            <div className="flex items-center gap-2">
+              <Database className="h-6 w-6 text-blue-400" />
+              <span className="text-xl font-bold">DigiKshetra</span>
+            </div>
+          </Link>
         </div>
 
         {/* Desktop Menu */}
@@ -50,22 +56,6 @@ const Navbar = () => {
                 className="text-white transition duration-200 hover:text-gray-300"
               >
                 My Properties
-              </Link>
-            </>
-          )}
-          {userRole === "User" && (
-            <>
-              <Link
-                to="/buyer/search"
-                className="text-white transition duration-200 hover:text-gray-300"
-              >
-                Search Properties
-              </Link>
-              <Link
-                to="/buyer/favorites"
-                className="text-white transition duration-200 hover:text-gray-300"
-              >
-                Favorites
               </Link>
             </>
           )}
@@ -99,13 +89,13 @@ const Navbar = () => {
             <>
               <Link
                 to="/profile"
-                className="text-white transition duration-200 hover:text-gray-300"
+                className="text-white transition duration-200 hover:text-gray-300 border-2 border-white py-2 px-4 rounded-md hover:bg-gray-700 transform transition-all duration-300"
               >
                 Profile
               </Link>
               <button
                 onClick={handleLogout}
-                className="text-white transition duration-200 hover:text-gray-300"
+                className="text-white transition duration-200 hover:text-gray-300 border-2 border-white py-2 px-4 rounded-md hover:bg-gray-700 transform transition-all duration-300"
               >
                 Logout
               </button>
@@ -115,13 +105,13 @@ const Navbar = () => {
             <>
               <Link
                 to="/login"
-                className="text-white transition duration-200 hover:text-gray-300"
+                className="text-white transition duration-200 hover:text-gray-300 border-2 border-white py-2 px-4 rounded-md hover:bg-gray-700 transform transition-all duration-300"
               >
                 Login
               </Link>
               <Link
                 to="/signup"
-                className="text-white transition duration-200 hover:text-gray-300"
+                className="text-white transition duration-200 hover:text-gray-300 border-2 border-white py-2 px-4 rounded-md hover:bg-gray-700 transform transition-all duration-300"
               >
                 Signup
               </Link>
@@ -193,22 +183,6 @@ const Navbar = () => {
               className="block text-white transition duration-200 hover:text-gray-300"
             >
               My Properties
-            </Link>
-          </>
-        )}
-        {userRole === "User" && (
-          <>
-            <Link
-              to="/buyer/search"
-              className="block text-white transition duration-200 hover:text-gray-300"
-            >
-              Search Properties
-            </Link>
-            <Link
-              to="/buyer/favorites"
-              className="block text-white transition duration-200 hover:text-gray-300"
-            >
-              Favorites
             </Link>
           </>
         )}
