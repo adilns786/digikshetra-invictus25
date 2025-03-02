@@ -18,7 +18,7 @@ const VerifyProperties = () => {
         const properties = querySnapshot.docs
           .map((doc) => ({ id: doc.id, ...doc.data() }))
           .filter((property) => property.Approved === false);
-
+console.log(properties)
         setPendingProperties(properties);
       } catch (error) {
         console.error("Error fetching properties:", error);
@@ -27,6 +27,60 @@ const VerifyProperties = () => {
 
     fetchProperties();
   }, []);
+  const handleUpdateStatus = async (id, isApproved, property) => {
+    try {
+      if (isApproved) {
+        // Prepare required fields for the Genesis block API
+        const payload = {
+          dlid: generateDLID(), // Generate unique DLID
+          area: property.area,
+          owner_name: property.contactName, // Mapping contact name as owner name
+          landmark: property.nearbyLandmarks,
+          property_type: property.propertyType,
+          price: property.price,
+        };
+  
+        // Post to the Genesis Ledger API
+        const response = await fetch("http://127.0.0.1:8000/ledgers/create-genesis/", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+  
+        if (!response.ok) throw new Error("Failed to post to ledger");
+  
+        const result = await response.json();
+  
+        if (result.message === "Genesis block created successfully") {
+          alert("Property successfully posted to ledger ✅");
+  
+          // Update Firestore after successful ledger creation
+          const propertyRef = doc(db, "PropertyData", id);
+          await updateDoc(propertyRef, {
+            Approved: true,
+            DLID: payload.dlid,
+            updatedAt: new Date(),
+          });
+  
+          setPendingProperties((prev) => prev.filter((p) => p.id !== id));
+        } else {
+          alert("Failed to post to ledger. Property not approved.");
+        }
+      } else {
+        // Reject property without sending to ledger
+        const propertyRef = doc(db, "PropertyData", id);
+        await updateDoc(propertyRef, { Approved: false });
+  
+        setPendingProperties((prev) => prev.filter((p) => p.id !== id));
+        alert("Property rejected.");
+      }
+    } catch (error) {
+      console.error("Error updating status:", error);
+      alert("Failed to update property status.");
+    }
+  };
+  
+  
 
   // Function to generate a unique DLID based on timestamp
   const generateDLID = () => {
@@ -43,29 +97,29 @@ const VerifyProperties = () => {
   };
 
   
-  const handleUpdateStatus = async (id, isApproved) => {
-    try {
-      const propertyRef = doc(db, "PropertyData", id);
-      const updateData = {
-        Approved: isApproved,
-        updatedAt: new Date(),
-      };
+  // const handleUpdateStatus = async (id, isApproved) => {
+  //   try {
+  //     const propertyRef = doc(db, "PropertyData", id);
+  //     const updateData = {
+  //       Approved: isApproved,
+  //       updatedAt: new Date(),
+  //     };
 
-      if (isApproved) {
-        updateData.DLID = generateDLID(); // Assign unique DLID on approval
-      }
+  //     if (isApproved) {
+  //       updateData.DLID = generateDLID(); // Assign unique DLID on approval
+  //     }
 
-      await updateDoc(propertyRef, updateData);
+  //     await updateDoc(propertyRef, updateData);
 
       
-      setPendingProperties((prev) => prev.filter((property) => property.id !== id));
+  //     setPendingProperties((prev) => prev.filter((property) => property.id !== id));
 
-      alert(`Property ${isApproved ? "approved" : "rejected"}!`);
-    } catch (error) {
-      console.error("Error updating status:", error);
-      alert("Failed to update property status.");
-    }
-  };
+  //     alert(`Property ${isApproved ? "approved" : "rejected"}!`);
+  //   } catch (error) {
+  //     console.error("Error updating status:", error);
+  //     alert("Failed to update property status.");
+  //   }
+  // };
 
   return (
     <div className="space-y-6 p-6 md:p-8 lg:p-10 xl:p-12">
@@ -129,13 +183,15 @@ const VerifyProperties = () => {
                       <Link to={`/property/${property.id}`}>View Details</Link>
                     </Button>
                     <Button
-                      variant="default"
-                      className="bg-green-600 hover:bg-green-700"
-                      onClick={() => handleUpdateStatus(property.id, true)}
-                    >
-                      <CheckCircle className="mr-2 h-5 w-5" />
-                      Approve
-                    </Button>
+  variant="default"
+  className="bg-green-600 hover:bg-green-700"
+  onClick={() => handleUpdateStatus(property.id, true, property)}
+>
+  <CheckCircle className="mr-2 h-5 w-5" />
+  Approve
+</Button>
+
+
                     <Button
                       variant="destructive"
                       className="bg-red-600 hover:bg-red-700"
