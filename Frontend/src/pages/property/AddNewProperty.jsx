@@ -1,6 +1,6 @@
-import { useState } from "react";
-import { Link ,useNavigate} from "react-router-dom";
-import { ArrowLeft, Upload } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -28,12 +28,12 @@ const steps = [
   "Nearby Landmarks",
   "Contact Details",
   "Legal Compliance",
-  "Documents & Media",
 ];
+
 export default function AddNewProperty() {
   const [step, setStep] = useState(0);
   const navigate = useNavigate();
-  // const { toast } = useToast();
+
   const [formData, setFormData] = useState({
     title: "",
     location: "",
@@ -50,109 +50,59 @@ export default function AddNewProperty() {
     contactPhone: "",
     contactEmail: "",
     legalCompliance: "",
-    photos: [],
-    videos: [],
-    documents: [],
   });
+
+  // Load saved form data from localStorage when the component mounts
+  useEffect(() => {
+    const savedFormData = localStorage.getItem("propertyFormData");
+    if (savedFormData) {
+      setFormData(JSON.parse(savedFormData));
+    }
+  }, []);
+
+  // Save form data to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem("propertyFormData", JSON.stringify(formData));
+  }, [formData]);
 
   const handleChange = (e) => {
     const { id, value } = e.target;
     setFormData({ ...formData, [id]: value });
   };
 
-
-  const handleFileUpload = async (e, field) => {
-    const files = e.target.files;
-    const uploadedUrls = [];
-
-    for (let file of files) {
-      const data = new FormData();
-      data.append("file", file);
-      data.append("upload_preset", "your_cloudinary_preset");
-      
-      const res = await fetch("https://api.cloudinary.com/v1_1/your_cloud_name/upload", {
-        method: "POST",
-        body: data,
-      });
-
-      const fileData = await res.json();
-      uploadedUrls.push(fileData.secure_url);
-    }
-
-    setFormData({ ...formData, [field]: [...formData[field], ...uploadedUrls] });
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     try {
-      // Step 1: Upload images to Cloudinary
-      const uploadedImageUrls = await Promise.all(
-        formData.photos.map(async (file) => {
-          const data = new FormData();
-          data.append("file", file);
-          data.append("upload_preset", "your_cloudinary_preset"); // Replace with your Cloudinary upload preset
-  
-          const res = await fetch(
-            "https://api.cloudinary.com/v1_1/your_cloud_name/upload", // Replace with your Cloudinary cloud name
-            {
-              method: "POST",
-              body: data,
-            }
-          );
-  
-          if (!res.ok) {
-            throw new Error("Failed to upload image to Cloudinary");
-          }
-  
-          const fileData = await res.json();
-          return fileData.secure_url; // Return the secure URL of the uploaded image
-        })
-      );
-  
-      // Step 2: Prepare data for Firebase (including Cloudinary image URLs)
+      // Prepare data for the server
       const propertyData = {
         ...formData,
-        photos: uploadedImageUrls, // Replace local file objects with Cloudinary URLs
       };
-  
-      // Step 3: Send data to your server
-      const response = await fetch("/api/new-property", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(propertyData),
-      });
-  
-      if (!response.ok) {
-        throw new Error("Failed to save property to server");
-      }
-  
-      const result = await response.json();
-  
-      // Step 4: Upload data to Firebase (optional, if your server doesn't handle this)
-      const firebaseResponse = await fetch(
-        "https://your-firebase-database-url/properties.json", // Replace with your Firebase database URL
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(propertyData),
-        }
-      );
-  
-      if (!firebaseResponse.ok) {
-        throw new Error("Failed to save property to Firebase");
-      }
-  
+
+      // Simulate sending data to the server
+      // const response = await fetch("/api/new-property", {
+      //   method: "POST",
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      //   body: JSON.stringify(propertyData),
+      // });
+
+      // if (!response.ok) {
+      //   throw new Error("Failed to save property to server");
+      // }
+
+      // const result = await response.json();
+
+      // Clear localStorage after successful submission
+      localStorage.removeItem("propertyFormData");
+
       // Success
       toast.success("Property saved successfully! 🎉");
-      console.log("Property saved:", result);
-  
+      console.log("Property saved:", propertyData);
+
       // Redirect or reset form
-      navigate("/properties"); // Redirect to properties page
+      navigate("/landowner/properties/new/media"); // Redirect to properties page
     } catch (error) {
       console.error("Error saving property:", error);
       toast.error("Failed to save property. Please try again.");
@@ -180,8 +130,18 @@ export default function AddNewProperty() {
 
       <div className="flex justify-between">
         {steps.map((s, index) => (
-          <div key={index} className={`text-sm font-medium ${index <= step ? "text-blue-600" : "text-gray-400"}`}>
-            {index <= step ? <CheckCircle className="inline-block mr-2" /> : "○"} {s}
+          <div
+            key={index}
+            className={`text-sm font-medium ${
+              index <= step ? "text-blue-600" : "text-gray-400"
+            }`}
+          >
+            {index <= step ? (
+              <CheckCircle className="inline-block mr-2" />
+            ) : (
+              "○"
+            )}{" "}
+            {s}
           </div>
         ))}
       </div>
@@ -190,290 +150,211 @@ export default function AddNewProperty() {
         <div className="grid gap-6 md:grid-cols-2">
           {/* Left Column */}
           {step === 0 && (
-          <div className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Property Details</CardTitle>
-                <CardDescription>
-                  Basic information about your property
-                </CardDescription>
-              </CardHeader>
-             
-              <CardContent className="space-y-4">
-                <Input
-                  id="title"
-                  placeholder="Brief description"
-                  value={formData.title}
-                  onChange={handleChange}
-                  required
-                />
-                <Input
-                  id="location"
-                  placeholder="Address or GPS coordinates"
-                  value={formData.location}
-                  onChange={handleChange}
-                  required
-                />
-                <div className="grid gap-4 grid-cols-2">
-                  <Select
-                    onValueChange={(value) =>
-                      setFormData({ ...formData, propertyType: value })
-                    }
-                    required
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select type" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="residential">Residential</SelectItem>
-                      <SelectItem value="commercial">Commercial</SelectItem>
-                      <SelectItem value="agricultural">Agricultural</SelectItem>
-                    </SelectContent>
-                  </Select>
+            <div className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Property Details</CardTitle>
+                  <CardDescription>
+                    Basic information about your property
+                  </CardDescription>
+                </CardHeader>
+
+                <CardContent className="space-y-4">
                   <Input
-                    id="area"
-                    type="number"
-                    placeholder="Total area (sqft)"
-                    value={formData.area}
+                    id="title"
+                    placeholder="Brief description"
+                    value={formData.title}
                     onChange={handleChange}
                     required
                   />
-                </div>
-                <Input
-                  id="price"
-                  type="number"
-                  placeholder="Asking price"
-                  value={formData.price}
-                  onChange={handleChange}
-                  required
-                />
-                <Textarea
-                  id="description"
-                  placeholder="Detailed description"
-                  value={formData.description}
-                  onChange={handleChange}
-                  required
-                />
-              </CardContent>
-            </Card>
-            
-          
-          </div>
-)}
+                  <Input
+                    id="location"
+                    placeholder="Address or GPS coordinates"
+                    value={formData.location}
+                    onChange={handleChange}
+                    required
+                  />
+                  <div className="grid gap-4 grid-cols-2">
+                    <Select
+                      onValueChange={(value) =>
+                        setFormData({ ...formData, propertyType: value })
+                      }
+                      required
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="residential">Residential</SelectItem>
+                        <SelectItem value="commercial">Commercial</SelectItem>
+                        <SelectItem value="agricultural">
+                          Agricultural
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <Input
+                      id="area"
+                      type="number"
+                      placeholder="Total area (sqft)"
+                      value={formData.area}
+                      onChange={handleChange}
+                      required
+                    />
+                  </div>
+                  <Input
+                    id="price"
+                    type="number"
+                    placeholder="Asking price"
+                    value={formData.price}
+                    onChange={handleChange}
+                    required
+                  />
+                  <Textarea
+                    id="description"
+                    placeholder="Detailed description"
+                    value={formData.description}
+                    onChange={handleChange}
+                    required
+                  />
+                </CardContent>
+              </Card>
+            </div>
+          )}
           {step === 1 && (
             <div className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Ownership History</CardTitle>
-                <CardDescription>
-                  Provide details of previous ownership
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <Textarea
-                  id="ownershipHistory"
-                  placeholder="Previous owners and transfer dates"
-                  value={formData.ownershipHistory}
-                  onChange={handleChange}
-                />
-              </CardContent>
-            </Card>
-            </div>
-               )}
-
-               {step === 2 && (
-                <div className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Nearby Landmarks</CardTitle>
-                <CardDescription>
-                  List nearby schools, hospitals, etc.
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <Input
-                  id="nearbyLandmarks"
-                  placeholder="Schools, hospitals, etc."
-                  value={formData.nearbyLandmarks}
-                  onChange={handleChange}
-                />
-              </CardContent>
-            </Card>
-            <MapCard formData={formData} handleChange={handleChange}/>
-            <Card>
-            <CardHeader>
-              <CardTitle>GIS Mapping</CardTitle>
-              <CardDescription>Define property boundaries</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="aspect-video w-full bg-muted rounded-md flex items-center justify-center text-muted-foreground">
-                Map Interface Placeholder
-              </div>
-              <Input id="coordinates" placeholder="GPS coordinates" value={formData.coordinates} onChange={handleChange} />
-            </CardContent>
-            
-          </Card>
-          </div>
-           )}
-           {step === 3 && (
-          
-
-         
-          <div className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Contact Details</CardTitle>
-                <CardDescription>
-                  Provide contact information for inquiries
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <Input
-                  id="contactName"
-                  placeholder="Contact person's name"
-                  value={formData.contactName}
-                  onChange={handleChange}
-                  required
-                />
-                <Input
-                  id="contactPhone"
-                  type="tel"
-                  placeholder="Contact phone number"
-                  value={formData.contactPhone}
-                  onChange={handleChange}
-                  required
-                />
-                <Input
-                  id="contactEmail"
-                  type="email"
-                  placeholder="Contact email"
-                  value={formData.contactEmail}
-                  onChange={handleChange}
-                  required
-                />
-              </CardContent>
-            </Card>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Ownership History</CardTitle>
+                  <CardDescription>
+                    Provide details of previous ownership
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <Textarea
+                    id="ownershipHistory"
+                    placeholder="Previous owners and transfer dates"
+                    value={formData.ownershipHistory}
+                    onChange={handleChange}
+                  />
+                </CardContent>
+              </Card>
             </div>
           )}
-           {step === 4 && (
-          
 
-         
-          <div className="space-y-6">
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Legal Compliance</CardTitle>
-                <CardDescription>
-                  Provide legal and environmental details
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <Input
-                  id="legalCompliance"
-                  placeholder="Legal or environmental restrictions"
-                  value={formData.legalCompliance}
-                  onChange={handleChange}
-                />
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Documents</CardTitle>
-                <CardDescription>Upload required documents</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {[
-                  "Title Deed",
-                  "Encumbrance Certificate",
-                  "Property Tax Receipts",
-                  "Identification Proofs",
-                ].map((doc, index) => (
-                  <div key={index} className="space-y-2">
-                    <label className="text-sm font-medium">{doc}</label>
-                    <input
-                      type="file"
-                      id={`document-${index}`}
-                      className="hidden"
-                      onChange={(e) => handleFileUpload(e, "documents")}
-                    />
-                    <label htmlFor={`document-${index}`} className="w-full">
-                      <Button variant="outline" className="w-full" asChild>
-                        <div>
-                          <Upload className="mr-2 h-4 w-4" />
-                          Upload {doc}
-                        </div>
-                      </Button>
-                    </label>
+          {step === 2 && (
+            <div className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Nearby Landmarks</CardTitle>
+                  <CardDescription>
+                    List nearby schools, hospitals, etc.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <Input
+                    id="nearbyLandmarks"
+                    placeholder="Schools, hospitals, etc."
+                    value={formData.nearbyLandmarks}
+                    onChange={handleChange}
+                  />
+                </CardContent>
+              </Card>
+              <MapCard formData={formData} handleChange={handleChange} />
+              <Card>
+                <CardHeader>
+                  <CardTitle>GIS Mapping</CardTitle>
+                  <CardDescription>Define property boundaries</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="aspect-video w-full bg-muted rounded-md flex items-center justify-center text-muted-foreground">
+                    Map Interface Placeholder
                   </div>
-                ))}
-              </CardContent>
-            </Card>
+                  <Input
+                    id="coordinates"
+                    placeholder="GPS coordinates"
+                    value={formData.coordinates}
+                    onChange={handleChange}
+                  />
+                </CardContent>
+              </Card>
             </div>
           )}
-           {step === 5 && (
-          
+          {step === 3 && (
+            <div className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Contact Details</CardTitle>
+                  <CardDescription>
+                    Provide contact information for inquiries
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <Input
+                    id="contactName"
+                    placeholder="Contact person's name"
+                    value={formData.contactName}
+                    onChange={handleChange}
+                    required
+                  />
+                  <Input
+                    id="contactPhone"
+                    type="tel"
+                    placeholder="Contact phone number"
+                    value={formData.contactPhone}
+                    onChange={handleChange}
+                    required
+                  />
+                  <Input
+                    id="contactEmail"
+                    type="email"
+                    placeholder="Contact email"
+                    value={formData.contactEmail}
+                    onChange={handleChange}
+                    required
+                  />
+                </CardContent>
+              </Card>
+            </div>
+          )}
+          {step === 4 && (
+            <div className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Legal Compliance</CardTitle>
+                  <CardDescription>
+                    Provide legal and environmental details
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <Input
+                    id="legalCompliance"
+                    placeholder="Legal or environmental restrictions"
+                    value={formData.legalCompliance}
+                    onChange={handleChange}
+                  />
+                </CardContent>
+              </Card>
+            </div>
+          )}
 
-         
           <div className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Photos and Videos</CardTitle>
-                <CardDescription>Upload media files</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Property Photos</label>
-                  <input
-                    type="file"
-                    id="photos"
-                    multiple
-                    className="hidden"
-                    onChange={(e) => handleFileUpload(e, "photos")}
-                  />
-                  <label htmlFor="photos" className="w-full">
-                    <Button variant="outline" className="w-full" asChild>
-                      <div>
-                        <Upload className="mr-2 h-4 w-4" />
-                        Upload Photos
-                      </div>
-                    </Button>
-                  </label>
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">
-                    Property Videos (Optional)
-                  </label>
-                  <input
-                    type="file"
-                    id="videos"
-                    multiple
-                    className="hidden"
-                    onChange={(e) => handleFileUpload(e, "videos")}
-                  />
-                  <label htmlFor="videos" className="w-full">
-                    <Button variant="outline" className="w-full" asChild>
-                      <div>
-                        <Upload className="mr-2 h-4 w-4" />
-                        Upload Videos
-                      </div>
-                    </Button>
-                  </label>
-                </div>
-              </CardContent>
-            </Card>
+            <div className="flex justify-between mt-6">
+              {step > 0 && (
+                <Button type="button" onClick={() => setStep(step - 1)}>
+                  Previous
+                </Button>
+              )}
+              {step < 4 ? (
+                <Button type="button" onClick={() => setStep(step + 1)}>
+                  Next
+                </Button>
+              ) : (
+                <Button type="submit">Save</Button>
+              )}
+            </div>
           </div>
-        )}
-        
-        <div className="space-y-6">
-<div className="flex justify-between mt-6">
-          {step > 0 && <Button onClick={() => setStep(step - 1)}>Previous</Button>}
-          {step < 5 ? <Button onClick={() => setStep(step + 1)}>Next</Button> : <Button type="submit">Save </Button>}
         </div>
-      </div>
-    </div>
-    </form>
+      </form>
     </div>
   );
 }

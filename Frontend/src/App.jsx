@@ -28,6 +28,7 @@ import Favorites from "./pages/buyer/Favourites";
 import SidebarProvider from "@/components/ui/sidebar";
 import GovernmentDashboard from "./pages/govOfficer/Dashboard";
 import VerifyProperties from "./pages/govOfficer/VerifyProperty";
+import ImageUpload from "./pages/property/component/ImageUpload";
 
 const App = () => {
   return (
@@ -55,7 +56,8 @@ const Content = () => {
         <Route path="/landowner" element={<LandOwnerPage />}>
           <Route index element={<Dashboard />} />
           <Route path="properties" element={<PropertyListings />} />
-          
+          <Route path="properties/new/media" element={<ImageUpload />} />
+
           <Route path="properties/new" element={<AddNewProperty />} />
           <Route path="inquiries" element={<Inquiries />} />
           <Route path="profile" element={<ProfileManagement />} />
