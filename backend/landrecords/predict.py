@@ -2,37 +2,44 @@ import pandas as pd
 import pickle
 import numpy as np
 import re
-
-def main():
+def predict_fraud(transaction_data):
     """
-    Main function to demonstrate the usage of the fraud detection model.
+    Function to predict fraud given transaction data.
+    
+    Args:
+        transaction_data: A pandas DataFrame or single transaction dictionary/Series
+                         containing the features needed for prediction.
+    
+    Returns:
+        tuple: (prediction, probability) where:
+            - prediction: Boolean, True if fraudulent, False if legitimate
+            - probability: Float, the probability of fraud (between 0 and 1)
     """
     # 1. Load the trained model
     model = load_model('real_estate_fraud_model.pkl')
     
     if model is None:
-        print("Error: Could not load the model.")
-        return
+        raise Exception("Error: Could not load the model.")
     
-    # 2. Load your data - replace this with your actual data loading code
-    # Here, we're creating a sample transaction for demonstration
-    sample_transaction = create_sample_transaction()
+    # 2. Make predictions
+    prediction_result = predict(model, transaction_data)
     
-    # 3. Make predictions
-    prediction_result = predict(model, sample_transaction)
+    # 3. Extract prediction and probability from the result
+    # Assuming predict() returns a tuple of (predictions, probabilities)
+    predictions, probabilities = prediction_result
     
-    # 4. Display the results
-    display_results(sample_transaction, prediction_result)
+    # If we have a single transaction, return a simple tuple
+    if len(predictions) == 1:
+        is_fraud = bool(predictions[0])
+        fraud_probability = float(probabilities[0][1])  # Index 1 for fraud probability
+        return (is_fraud, fraud_probability)
     
-    # 5. Example of batch prediction (if you have multiple transactions)
-    print("\n--- Batch Prediction Example ---")
-    batch_transactions = create_batch_transactions()
-    batch_results = predict(model, batch_transactions)
-    
-    print(f"Processed {len(batch_transactions)} transactions:")
-    for i, (pred, prob) in enumerate(zip(batch_results[0], batch_results[1])):
-        print(f"Transaction {batch_transactions['transaction_id'].iloc[i]}: {'Fraudulent' if pred else 'Legitimate'} (Fraud probability: {prob[1]:.4f})")
-
+    # If we have multiple transactions, return lists
+    else:
+        is_fraud_list = [bool(p) for p in predictions]
+        fraud_probability_list = [float(p[1]) for p in probabilities]
+        return (is_fraud_list, fraud_probability_list)
+        
 def load_model(file_path):
     """
     Load the trained model from a pickle file.
@@ -330,5 +337,5 @@ def display_results(transaction, prediction_result):
     else:
         print("- No significant warning flags detected")
 
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()

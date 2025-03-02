@@ -73,42 +73,64 @@ export default function AddNewProperty() {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setSubmitting(true);
+  e.preventDefault();
+  setSubmitting(true);
 
+  try {
+    // Firebase document structure
+    const propertyData = {
+      ...formData,
+      metadata: {
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+        status: "draft",
+      },
+      // Convert string numbers to numbers
+      area: Number(formData.area),
+      price: Number(formData.price),
+    };
+
+    // Step 1: Add document to Firestore
+    const docRef = await addDoc(collection(db, "PropertyData"), propertyData);
+    console.log("Document written with ID: ", docRef.id);
+
+    // Step 2: Send data to your server at /predict (only if Firebase upload is successful)
     try {
-      // Firebase document structure
-      const propertyData = {
-        ...formData,
-        metadata: {
-          createdAt: serverTimestamp(),
-          updatedAt: serverTimestamp(),
-          status: "draft",
+      const response = await fetch('http://localhost:8000/api/predict/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
-        // Convert string numbers to numbers
-        area: Number(formData.area),
-        price: Number(formData.price),
-      };
+        body: JSON.stringify(propertyData), // Send the same data to your server
+      });
 
-      // Add document to Firestore
-      const docRef = await addDoc(collection(db, "PropertyData"), propertyData);
+      if (!response.ok) {
+        throw new Error('Failed to send data to server');
+      }
 
-      // Clear local storage
-      localStorage.removeItem("propertyFormData");
-
-      toast.success("Property saved successfully! 🎉");
-      console.log("Document written with ID: ", docRef.id);
-
-      // Redirect to media upload page with new document ID
-      navigate(`/landowner/properties/new/media/${docRef.id}`);
-
-    } catch (error) {
-      console.error("Error saving property:", error);
-      toast.error("Failed to save property. Please try again.");
-    } finally {
-      setSubmitting(false);
+      const result = await response.json();
+      console.log('Server response:', result);
+    } catch (serverError) {
+      console.error('Error sending data to server:', serverError);
+      // Handle server error (e.g., log it or show a warning)
+      toast.warning('Property saved to Firebase, but failed to send to server.');
     }
-  };
+
+    // Clear local storage
+    localStorage.removeItem("propertyFormData");
+
+    toast.success("Property saved successfully! 🎉");
+
+    // Redirect to media upload page with new document ID
+    navigate(`/landowner/properties/new/media/${docRef.id}`);
+
+  } catch (firebaseError) {
+    console.error("Error saving property to Firebase:", firebaseError);
+    toast.error("Failed to save property. Please try again.");
+  } finally {
+    setSubmitting(false);
+  }
+};
 
   return (
     <div className="space-y-6">
