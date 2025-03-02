@@ -29,6 +29,7 @@ import SidebarProvider from "@/components/ui/sidebar";
 import GovernmentDashboard from "./pages/govOfficer/Dashboard";
 import VerifyProperties from "./pages/govOfficer/VerifyProperty";
 import ImageUpload from "./pages/property/component/ImageUpload";
+import VerifiedProperties from "./pages/govOfficer/VerifiedProperties";
 
 
 const PrivateRoute = ({ children, role }) => {
@@ -72,6 +73,7 @@ const Content = () => {
         <Route path="/gov" element={<PrivateRoute role="Register Officer"><LandOwnerPage /></PrivateRoute>}>
           <Route index element={<GovernmentDashboard/>} />
           <Route path="verify-properties" element={<VerifyProperties />} />
+          <Route path="verified-properties" element={<VerifiedProperties />} />
           
           <Route path="properties/new" element={<AddNewProperty />} />
           <Route path="inquiries" element={<Inquiries />} />
