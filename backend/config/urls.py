@@ -7,6 +7,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('landrecords.urls')),
     path('api-auth/', include('api.urls')),
+    path('ledgers/', include('ledgers.urls')),
 ]
 
 # ✅ Serve media files in development
