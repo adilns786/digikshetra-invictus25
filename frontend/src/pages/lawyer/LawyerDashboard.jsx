@@ -84,7 +84,7 @@ export default function LawyerDashboard() {
   
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div className="flex min-h-screen w-full bg-gray-50">
       {/* Sidebar */}
       <div className="hidden w-64 flex-col bg-white border-r border-gray-200 md:flex">
         <div className="flex h-14 items-center border-b px-4">
@@ -149,7 +149,7 @@ export default function LawyerDashboard() {
               <User className="h-5 w-5" />
             </div>
             <div>
-              <div className="font-medium">Jane Smith</div>
+              <div className="font-medium"> Darshan Khapekar</div>
               <div className="text-xs text-gray-500">Senior Legal Counsel</div>
             </div>
           </div>
@@ -157,7 +157,7 @@ export default function LawyerDashboard() {
       </div>
 
       {/* Main Content */}
-      <div className="flex flex-1 flex-col">
+      <div className="flex flex-1 flex-col w-full">
         {/* Header */}
         <header className="flex h-14 items-center gap-4 border-b bg-white px-6">
           <div className="w-full flex-1">
@@ -194,7 +194,7 @@ export default function LawyerDashboard() {
         </header>
 
         {/* Content */}
-        <main className="flex-1 overflow-auto">
+        <main className="flex-1 overflow-auto ">
           <div className="container mx-auto p-4 md:p-6">
             <div className="mb-6">
               <h1 className="text-2xl font-bold tracking-tight">Lawyer Dashboard</h1>
