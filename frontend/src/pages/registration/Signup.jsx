@@ -97,7 +97,7 @@ const Signup = () => {
             <TextField label="Email Address" name="email" type="email" value={formData.email} onChange={handleChange} fullWidth margin="normal" required InputProps={{ startAdornment: <Email /> }} />
             <TextField label="Location (City, State)" name="location" value={formData.location} onChange={handleChange} fullWidth margin="normal" required InputProps={{ startAdornment: <LocationOn /> }} />
             <TextField select label="Role" name="role" value={formData.role} onChange={handleChange} fullWidth margin="normal" required>
-              <MenuItem value="Buyer">User</MenuItem>
+              <MenuItem value="User">User</MenuItem>
               <MenuItem value="Register Officer">Register Officer</MenuItem>
             </TextField>
             <TextField label="Aadhaar ID" name="aadhaarId" value={formData.aadhaarId} onChange={handleChange} fullWidth margin="normal" required InputProps={{ startAdornment: <Gavel /> }} />

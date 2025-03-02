@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',  # ✅ Ensure this is before your local apps
     'landrecords',
+    'ledgers',
 ]
 
 MIDDLEWARE = [

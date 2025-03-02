@@ -11,7 +11,48 @@ redis_client = redis.StrictRedis(
     password="aWHHBWiwKtcPFSx5ECSgsmxUFG164av9",  
     decode_responses=True
 )
+###### New Implementation of Web3
 
+import os
+import json
+from datetime import datetime
+import hashlib
+
+GLOBAL_LEDGER_FOLDER = "blockchain/ledgers/"
+
+
+def create_genesis_block(dlid):
+    folder = f"{GLOBAL_LEDGER_FOLDER}{dlid}/"
+    if not os.path.exists(folder):
+        os.makedirs(folder)
+        genesis_block = {
+            "property_id": dlid,
+            "timestamp": str(datetime.now()),
+            "transactions": [],
+            "previous_hash": "0"
+        }
+        with open(folder + "genesis.json", "w") as file:
+            json.dump(genesis_block, file)
+    return folder
+
+def add_transaction(dlid, seller, buyer, price):
+    folder = create_genesis_block(dlid)
+    transaction = {
+        "seller": seller,
+        "buyer": buyer,
+        "price": price,
+        "timestamp": str(datetime.now())
+    }
+
+    block_hash = hashlib.sha256(json.dumps(transaction).encode()).hexdigest()
+    block_filename = f"{folder}block_{block_hash[:10]}.json"
+
+    with open(block_filename, "w") as file:
+        json.dump(transaction, file)
+
+    return block_hash
+
+######
 
 class Block:
     def __init__(self, index, timestamp, data, previous_hash=''):
