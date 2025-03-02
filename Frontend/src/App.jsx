@@ -84,10 +84,10 @@ const Content = () => {
           <Route path="help" element={<HelpSupport />} />
         </Route>
         {/* Buyer Routes */}
-        <Route path="/buyer" element={<BuyerDashboard />} />
+        <Route path="landowner/buyer" element={<BuyerDashboard />} />
         <Route path="/buyer/search" element={<SearchProperties />} />
         <Route path="/landowner/favorites" element={<Favorites />} />
-        <Route path="/landowner/property/:id" element={<PropertyDetails />} />
+        <Route path="/property/:id" element={<PropertyDetails />} />
         <Route path="/landowner/calculator" element={<MortgageCalculator />} />
         <Route path="/landowner/reviews" element={<ReviewsAndRatings />} />
       </Routes>
