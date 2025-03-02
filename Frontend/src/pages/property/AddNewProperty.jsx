@@ -36,6 +36,12 @@ export default function AddNewProperty() {
   const [step, setStep] = useState(0);
   const navigate = useNavigate();
   const [submitting, setSubmitting] = useState(false);
+  const [coordinates, setCoordinates] = useState([]);
+
+  useEffect(() => {
+    const storedCoordinates = JSON.parse(localStorage.getItem("coordinates")) || [];
+    setCoordinates(storedCoordinates);
+  }, []);
 
   const [formData, setFormData] = useState({
     title: "",
@@ -142,7 +148,7 @@ export default function AddNewProperty() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 ">
       <div className="flex items-center gap-4">
         <Button variant="outline" size="icon" asChild>
           <Link to="/landowner/properties">
@@ -177,10 +183,10 @@ export default function AddNewProperty() {
       </div>
 
       <form onSubmit={handleSubmit}>
-        <div className="grid gap-6 md:grid-cols-2">
+        <div className="lg:px-50">
           {/* Left Column */}
           {step === 0 && (
-            <div className="space-y-6">
+            <div className="space-y-6 ">
               <Card>
                 <CardHeader>
                   <CardTitle>Property Details</CardTitle>
@@ -248,6 +254,20 @@ export default function AddNewProperty() {
                   />
                 </CardContent>
               </Card>
+              <div className="flex justify-between mt-6">
+              {step > 0 && (
+                <Button type="button" onClick={() => setStep(step - 1)}>
+                  Previous
+                </Button>
+              )}
+              {step < 5 ? (
+                <Button type="button" onClick={() => setStep(step + 1)}>
+                  Next
+                </Button>
+              ) : (
+                <Button type="submit">Save</Button>
+              )}
+            </div>
             </div>
           )}
           {step === 1 && (
@@ -268,6 +288,20 @@ export default function AddNewProperty() {
                   />
                 </CardContent>
               </Card>
+              <div className="flex justify-between mt-6">
+              {step > 0 && (
+                <Button type="button" onClick={() => setStep(step - 1)}>
+                  Previous
+                </Button>
+              )}
+              {step < 5 ? (
+                <Button type="button" onClick={() => setStep(step + 1)}>
+                  Next
+                </Button>
+              ) : (
+                <Button type="submit">Save</Button>
+              )}
+            </div>
             </div>
           )}
 
@@ -290,6 +324,44 @@ export default function AddNewProperty() {
                 </CardContent>
               </Card>
               <MapCard formData={formData} handleChange={handleChange} />
+              <div>
+      <h2 className="text-2xl font-bold">📍 Selected Coordinates</h2>
+      {coordinates.length > 0 ? (
+        <table className="min-w-full bg-white rounded-lg shadow-md overflow-hidden mt-4">
+          <thead>
+            <tr className="bg-gray-200 text-gray-600 text-sm">
+              <th className="py-3 px-4 text-left">Latitude</th>
+              <th className="py-3 px-4 text-left">Longitude</th>
+            </tr>
+          </thead>
+          <tbody className="text-gray-600 text-sm">
+            {coordinates.map(([lat, lng], index) => (
+              <tr key={index} className="border-b border-gray-200">
+                <td className="py-3 px-4">{lat}</td>
+                <td className="py-3 px-4">{lng}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      ) : (
+        <p className="text-gray-500 mt-2">No coordinates selected.</p>
+      )}
+    </div>
+             
+              <div className="flex justify-between mt-6">
+              {step > 0 && (
+                <Button type="button" onClick={() => setStep(step - 1)}>
+                  Previous
+                </Button>
+              )}
+              {step < 5 ? (
+                <Button type="button" onClick={() => setStep(step + 1)}>
+                  Next
+                </Button>
+              ) : (
+                <Button type="submit">Save</Button>
+              )}
+            </div>
             </div>
           )}
           {step === 3 && (
@@ -329,6 +401,20 @@ export default function AddNewProperty() {
                   />
                 </CardContent>
               </Card>
+              <div className="flex justify-between mt-6">
+              {step > 0 && (
+                <Button type="button" onClick={() => setStep(step - 1)}>
+                  Previous
+                </Button>
+              )}
+              {step < 5 ? (
+                <Button type="button" onClick={() => setStep(step + 1)}>
+                  Next
+                </Button>
+              ) : (
+                <Button type="submit">Save</Button>
+              )}
+            </div>
             </div>
           )}
           {step === 4 && (
@@ -349,11 +435,7 @@ export default function AddNewProperty() {
                   />
                 </CardContent>
               </Card>
-            </div>
-          )}
-
-          <div className="space-y-6">
-            <div className="flex justify-between mt-6">
+              <div className="flex justify-between mt-6">
               {step > 0 && (
                 <Button type="button" onClick={() => setStep(step - 1)}>
                   Previous
@@ -367,6 +449,11 @@ export default function AddNewProperty() {
                 <Button type="submit">Save</Button>
               )}
             </div>
+            </div>
+          )}
+
+          <div className="space-y-6">
+            
           </div>
         </div>
       </form>
