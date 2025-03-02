@@ -72,6 +72,17 @@ const Sidebar = () => {
       path: "/landowner/properties",
     },
     {
+      label: "My Properties",
+      icon: <Home className="h-5 w-5" />,
+      path: "/landowner/myproperty",
+    },
+    {
+      label: "Buyer Search",
+      icon: <ListFilter className="h-5 w-5" />,
+      path: "landowner/buyer",
+    },
+
+    {
       label: "Add New Property",
       icon: <PlusCircle className="h-5 w-5" />,
       path: "/landowner/properties/new",
