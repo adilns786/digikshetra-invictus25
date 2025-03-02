@@ -1,5 +1,10 @@
-
-import { BrowserRouter, Route, Routes, useLocation,Navigate } from "react-router-dom";
+import {
+  BrowserRouter,
+  Route,
+  Routes,
+  useLocation,
+  Navigate,
+} from "react-router-dom";
 import React from "react";
 import Login from "./pages/registration/Login";
 import Signup from "./pages/registration/Signup";
@@ -30,7 +35,8 @@ import GovernmentDashboard from "./pages/govOfficer/Dashboard";
 import VerifyProperties from "./pages/govOfficer/VerifyProperty";
 import ImageUpload from "./pages/property/component/ImageUpload";
 import VerifiedProperties from "./pages/govOfficer/VerifiedProperties";
-
+import Ledger from "./pages/ledger/ledger";
+import BlockDetails from "./pages/ledger/DLID";
 
 const PrivateRoute = ({ children, role }) => {
   const userRole = sessionStorage.getItem("role");
@@ -47,52 +53,68 @@ const App = () => {
 
 const Content = () => {
   const location = useLocation();
-  const showSidebar = location.pathname.startsWith("/landowner") || location.pathname.startsWith("/gov");
+  const showSidebar =
+    location.pathname.startsWith("/landowner") ||
+    location.pathname.startsWith("/gov");
 
   return (
     <SidebarProvider>
-    <div className="flex w-full h-screen">
-      {showSidebar && <Sidebar className="w-64"/>} {/* Show sidebar for buyers & landowners */}
-      <Routes>
-        {/* Public Routes */}
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
+      <div className="flex w-full h-screen">
+        {showSidebar && <Sidebar className="w-64" />}{" "}
+        {/* Show sidebar for buyers & landowners */}
+        <Routes>
+          {/* Public Routes */}
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
 
-        {/* Landowner Routes */}
-        <Route path="properties/new" element={<AddNewProperty />} />
-
-        <Route path="/landowner" element={<LandOwnerPage />}>
-          <Route index element={<Dashboard />} />
-          <Route path="properties" element={<PropertyListings />} />
-          <Route path="properties/new/media/:id" element={<ImageUpload />} />
-
-          <Route path="inquiries" element={<Inquiries />} />
-          <Route path="profile" element={<ProfileManagement />} />
-          <Route path="help" element={<HelpSupport />} />
-        </Route>
-        <Route path="/gov" element={<PrivateRoute role="Register Officer"><LandOwnerPage /></PrivateRoute>}>
-          <Route index element={<GovernmentDashboard/>} />
-          <Route path="verify-properties" element={<VerifyProperties />} />
-          <Route path="verified-properties" element={<VerifiedProperties />} />
-          
+          {/* Landowner Routes */}
           <Route path="properties/new" element={<AddNewProperty />} />
-          <Route path="inquiries" element={<Inquiries />} />
-          <Route path="profile" element={<ProfileManagement />} />
-          <Route path="help" element={<HelpSupport />} />
-        </Route>
-        {/* Buyer Routes */}
-        <Route path="/buyer" element={<BuyerDashboard />} />
-        <Route path="/buyer/search" element={<SearchProperties />} />
-        <Route path="/landowner/favorites" element={<Favorites />} />
-        <Route path="/landowner/property/:id" element={<PropertyDetails />} />
-        <Route path="/landowner/calculator" element={<MortgageCalculator />} />
-        <Route path="/landowner/reviews" element={<ReviewsAndRatings />} />
-      </Routes>
-      <Toaster />
+          <Route path="ledger" element={<Ledger />} />
+          <Route path="/blockchain-details/:dlid" element={<BlockDetails />} />
 
+          <Route path="/landowner" element={<LandOwnerPage />}>
+            <Route index element={<Dashboard />} />
+            <Route path="properties" element={<PropertyListings />} />
+            <Route path="properties/new/media/:id" element={<ImageUpload />} />
+
+            <Route path="inquiries" element={<Inquiries />} />
+            <Route path="profile" element={<ProfileManagement />} />
+            <Route path="help" element={<HelpSupport />} />
+          </Route>
+          <Route
+            path="/gov"
+            element={
+              <PrivateRoute role="Register Officer">
+                <LandOwnerPage />
+              </PrivateRoute>
+            }
+          >
+            <Route index element={<GovernmentDashboard />} />
+            <Route path="verify-properties" element={<VerifyProperties />} />
+            <Route
+              path="verified-properties"
+              element={<VerifiedProperties />}
+            />
+
+            <Route path="properties/new" element={<AddNewProperty />} />
+            <Route path="inquiries" element={<Inquiries />} />
+            <Route path="profile" element={<ProfileManagement />} />
+            <Route path="help" element={<HelpSupport />} />
+          </Route>
+          {/* Buyer Routes */}
+          <Route path="/buyer" element={<BuyerDashboard />} />
+          <Route path="/buyer/search" element={<SearchProperties />} />
+          <Route path="/landowner/favorites" element={<Favorites />} />
+          <Route path="/landowner/property/:id" element={<PropertyDetails />} />
+          <Route
+            path="/landowner/calculator"
+            element={<MortgageCalculator />}
+          />
+          <Route path="/landowner/reviews" element={<ReviewsAndRatings />} />
+        </Routes>
+        <Toaster />
       </div>
-    
     </SidebarProvider>
   );
 };
