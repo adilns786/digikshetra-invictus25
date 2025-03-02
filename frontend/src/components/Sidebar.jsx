@@ -126,12 +126,14 @@ const Sidebar = () => {
       }`}
     >
       <SidebarHeader className="flex items-center justify-between p-4">
-        <div className="flex items-center gap-2">
-          <Map className="h-6 w-6" />
-          {!isCollapsed && (
-            <span className="text-lg font-bold">Real Estate Portal</span>
-          )}
-        </div>
+        <Link to="/">
+          <div className="flex items-center gap-2">
+            <Map className="h-6 w-6" />
+            {!isCollapsed && (
+              <span className="text-lg font-bold">Real Estate Portal</span>
+            )}
+          </div>
+        </Link>
         <button onClick={toggleCollapse} className="p-2 hover:bg-muted rounded">
           {isCollapsed ? (
             <ChevronRight className="h-5 w-5" />
@@ -148,38 +150,40 @@ const Sidebar = () => {
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {location.pathname.startsWith("/landowner") && userItems.map((item, index) => (
-                <SidebarMenuItem key={index}>
-                  <SidebarMenuButton
-                    asChild
-                    className={`flex items-center gap-3 p-3 hover:bg-muted rounded ${
-                      location.pathname === item.path ? "bg-muted" : ""
-                    }`}
-                  >
-                    <Link to={item.path}>
-                      {item.icon}
-                      {!isCollapsed && <span>{item.label}</span>}
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              {location.pathname.startsWith("/landowner") &&
+                userItems.map((item, index) => (
+                  <SidebarMenuItem key={index}>
+                    <SidebarMenuButton
+                      asChild
+                      className={`flex items-center gap-3 p-3 hover:bg-muted rounded ${
+                        location.pathname === item.path ? "bg-muted" : ""
+                      }`}
+                    >
+                      <Link to={item.path}>
+                        {item.icon}
+                        {!isCollapsed && <span>{item.label}</span>}
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
             </SidebarMenu>
             <SidebarMenu>
-              {location.pathname.startsWith("/gov") && govItems.map((item, index) => (
-                <SidebarMenuItem key={index}>
-                  <SidebarMenuButton
-                    asChild
-                    className={`flex items-center gap-3 p-3 hover:bg-muted rounded ${
-                      location.pathname === item.path ? "bg-muted" : ""
-                    }`}
-                  >
-                    <Link to={item.path}>
-                      {item.icon}
-                      {!isCollapsed && <span>{item.label}</span>}
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              {location.pathname.startsWith("/gov") &&
+                govItems.map((item, index) => (
+                  <SidebarMenuItem key={index}>
+                    <SidebarMenuButton
+                      asChild
+                      className={`flex items-center gap-3 p-3 hover:bg-muted rounded ${
+                        location.pathname === item.path ? "bg-muted" : ""
+                      }`}
+                    >
+                      <Link to={item.path}>
+                        {item.icon}
+                        {!isCollapsed && <span>{item.label}</span>}
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

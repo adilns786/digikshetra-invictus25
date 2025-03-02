@@ -15,7 +15,7 @@ const LandingPage = () => {
   return (
     <div className="flex min-h-screen w-full flex-col bg-gray-900 text-white">
       {/* Header */}
-      <header className="sticky top-0 z-50 w-full border-b border-gray-700 bg-gray-800/90 backdrop-blur supports-[backdrop-filter]:bg-gray-800/60">
+      {/* <header className="sticky top-0 z-50 w-full border-b border-gray-700 bg-gray-800/90 backdrop-blur supports-[backdrop-filter]:bg-gray-800/60">
         <div className="container flex h-16 items-center justify-between mx-auto px-4">
           <div className="flex items-center gap-2">
             <Database className="h-6 w-6 text-blue-400" />
@@ -64,27 +64,31 @@ const LandingPage = () => {
             </Link>
           </div>
         </div>
-      </header>
+      </header> */}
 
       {/* Main Content */}
       <main className="flex-1">
         {/* Hero Section */}
-        <section className="relative py-20  md:py-28 bg-gradient-to-b from-gray-800 to-gray-900">
-          <div className="container mx-auto px-4 flex flex-col md:flex-row items-center gap-8 md:gap-16">
-            <div className="flex-1 space-y-6">
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight">
+        <section className="relative py-20 md:py-28 bg-gradient-to-b from-gray-800 to-gray-900">
+          {/* Background Video */}
+
+          {/* Content Section */}
+          <div className="container mx-auto px-4 flex flex-col md:flex-row items-center gap-8 md:gap-16 z-10">
+            {/* Left Section */}
+            <div className="flex-1 space-y-6 text-center md:text-left">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white leading-tight">
                 Secure Land Records with{" "}
                 <span className="text-blue-400">Blockchain & AI</span>
               </h1>
-              <p className="text-lg text-gray-400 max-w-[600px]">
+              <p className="text-lg text-gray-300 max-w-[600px] mx-auto md:mx-0">
                 A revolutionary system that digitizes and secures land records
                 using blockchain technology and artificial intelligence to
                 prevent disputes and ensure transparent property ownership.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
                 <Button
                   size="lg"
-                  className="gap-2 bg-blue-500 hover:bg-blue-600"
+                  className="gap-2 bg-blue-500 hover:bg-blue-600 text-white"
                 >
                   Get Started <ArrowRight className="h-4 w-4" />
                 </Button>
@@ -97,11 +101,13 @@ const LandingPage = () => {
                 </Button>
               </div>
             </div>
-            <div className="flex-1 relative">
+
+            {/* Right Section (Image) */}
+            <div className="flex-1 relative mt-10 md:mt-0 overflow-hidden">
               <img
                 src="https://plus.unsplash.com/premium_photo-1681487746049-c39357159f69?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
                 alt="Digital Land Records System"
-                className="rounded-lg shadow-2xl border-gray-700 border h-[400px] w-full object-cover"
+                className="rounded-lg shadow-2xl border-gray-700 border h-[400px] w-full object-cover transition-all duration-500 ease-in-out transform hover:scale-105"
               />
             </div>
           </div>
