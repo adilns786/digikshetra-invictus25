@@ -1,20 +1,38 @@
 #!/usr/bin/env python
-"""Django's command-line utility for administrative tasks."""
+"""Flask command-line utility for running the server and administrative tasks."""
 import os
 import sys
+from flask import Flask
+from waitress import serve  # For production deployment
+
+def create_app():
+    """Create and configure the Flask application."""
+    app = Flask(__name__)
+
+    # Load configuration from environment variables or a config file
+    app.config.from_object('config.settings')
+
+    # Register blueprints, routes, and other components here
+    @app.route('/')
+    def home():
+        return "Welcome to the Flask Server!"
+
+    return app
 
 def main():
-    """Run administrative tasks."""
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
-    try:
-        from django.core.management import execute_from_command_line
-    except ImportError as exc:
-        raise ImportError(
-            "Couldn't import Django. Are you sure it's installed and "
-            "available on your PYTHONPATH environment variable? Did you "
-            "forget to activate a virtual environment?"
-        ) from exc
-    execute_from_command_line(sys.argv)
+    """Run administrative tasks or start the Flask server."""
+    if len(sys.argv) > 1 and sys.argv[1] == 'runserver':
+        # Run the Flask development server
+        app = create_app()
+        app.run(host='0.0.0.0', port=5000, debug=True)
+    elif len(sys.argv) > 1 and sys.argv[1] == 'runprod':
+        # Run the Flask production server using Waitress
+        app = create_app()
+        serve(app, host='0.0.0.0', port=5000)
+    else:
+        print("Usage:")
+        print("  ./manage.py runserver  # Run the development server")
+        print("  ./manage.py runprod    # Run the production server")
 
 if __name__ == '__main__':
     main()
