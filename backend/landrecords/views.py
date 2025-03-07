@@ -139,45 +139,14 @@ class LandRecordViewSet(viewsets.ModelViewSet):
         """
         try:
             # Parse incoming JSON data
-            input_data = json.loads(request.body)
+            # input_data = json.loads(request.body)
 
-            # Map incoming data to the required structure
-            transaction_data = {
-                'transaction_id': ['TR999'],  # Default value
-                'timestamp': [input_data.get('timestamp', '2024-12-20 10:15:00')],  # Default value
-                'property_id': [input_data.get('property_id', 'P2050')],  # Default value
-                'seller_id': [input_data.get('seller_id', 'S125')],  # Default value
-                'buyer_id': [input_data.get('buyer_id', 'B210')],  # Default value
-                'property_type': [input_data.get('propertyType', 'residential')],  # Map propertyType
-                'area_sqft': [input_data.get('area', 0)],  # Map area
-                'listed_price': [input_data.get('price', 0)],  # Map price
-                'transaction_price': [input_data.get('price', 0)],  # Default to listed price
-                'price_per_sqft': [round(input_data.get('price', 0) / input_data.get('area', 1), 2)],  # Calculate
-                'location': [input_data.get('location', 'Unknown')],  # Map location
-                'coordinates': [input_data.get('coordinates', '0,0')],  # Map coordinates
-                'title_age_days': [input_data.get('title_age_days', 0)],  # Default value
-                'amenities': [input_data.get('amenities', '')],  # Map amenities
-                'nearby_landmarks': [input_data.get('nearbyLandmarks', '')],  # Map nearbyLandmarks
-                'ownership_changes_count': [input_data.get('ownershipHistory', 0)],  # Map ownershipHistory
-                'days_on_market': [input_data.get('days_on_market', 30)],  # Default value
-                'has_extract7_12': [input_data.get('has_extract7_12', False)],  # Default value
-                'has_mutation_certificate': [input_data.get('has_mutation_certificate', False)],  # Default value
-                'has_property_tax_receipt': [input_data.get('has_property_tax_receipt', False)],  # Default value
-                'has_sale_deed': [input_data.get('has_sale_deed', False)],  # Default value
-                'legal_compliance_complete': [input_data.get('legalCompliance', False)],  # Map legalCompliance
-                'price_change_percent': [input_data.get('price_change_percent', 0)],  # Default value
-                'buyer_seller_relation': [input_data.get('buyer_seller_relation', 'unrelated')],  # Default value
-                'agent_involved': [input_data.get('agent_involved', False)],  # Default value
-                'transaction_speed_days': [input_data.get('transaction_speed_days', 30)],  # Default value
-                'multiple_transaction_30days': [input_data.get('multiple_transaction_30days', False)],  # Default value
-                'seller_previous_fraud': [input_data.get('seller_previous_fraud', False)]  # Default value
-            }
-
+           
             # Convert to DataFrame
-            transaction_df = pd.DataFrame(transaction_data)
+            # transaction_df = pd.DataFrame(transaction_data)
 
             # Call the fraud prediction function
-            prediction = predict_fraud(transaction_df)
+            prediction = predict_fraud(request.body)
 
             # Return the prediction
             return Response({"is_fraud": prediction}, status=200)

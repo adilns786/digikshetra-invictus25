@@ -110,28 +110,6 @@ export default function AddNewProperty() {
       const docRef = await addDoc(collection(db, "PropertyData"), propertyData);
       console.log("Document written with ID: ", docRef.id);
 
-      // Step 2: Send data to your server at /predict (only if Firebase upload is successful)
-      try {
-        const response = await fetch("http://localhost:8000/api/predict/", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(propertyData), // Send the same data to your server
-        });
-
-        if (!response.ok) {
-          throw new Error("Failed to send data to server");
-        }
-
-        const result = await response.json();
-        console.log("Server response:", result);
-      } catch (serverError) {
-        console.error("Error sending data to server:", serverError);
-        // Handle server error (e.g., log it or show a warning)
-        toast.warning("Property saved to Firebase, but failed to send to server.");
-      }
-
       // Clear local storage
       localStorage.removeItem("propertyFormData");
 

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { CheckCircle, Home, MapPin, Clock, User, XCircle, Phone } from "lucide-react";
@@ -9,6 +8,7 @@ import { collection, getDocs, doc, updateDoc } from "firebase/firestore";
 
 const VerifyProperties = () => {
   const [pendingProperties, setPendingProperties] = useState([]);
+  const [fraudPredictions, setFraudPredictions] = useState({});
 
   // Fetch properties where Approved is false
   useEffect(() => {
@@ -18,8 +18,13 @@ const VerifyProperties = () => {
         const properties = querySnapshot.docs
           .map((doc) => ({ id: doc.id, ...doc.data() }))
           .filter((property) => property.Approved === false);
-console.log(properties)
+
         setPendingProperties(properties);
+
+        // Fetch fraud predictions for each property
+        properties.forEach((property) => {
+          fetchFraudPrediction(property);
+        });
       } catch (error) {
         console.error("Error fetching properties:", error);
       }
@@ -27,6 +32,63 @@ console.log(properties)
 
     fetchProperties();
   }, []);
+
+  // Function to fetch fraud prediction
+  const fetchFraudPrediction = async (property) => {
+    try {
+      const payload = mapPropertyToPredictPayload(property);
+
+      const response = await fetch("http://localhost:8000/api/predict/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) throw new Error("Failed to fetch fraud prediction");
+
+      const result = await response.json();
+      setFraudPredictions((prev) => ({
+        ...prev,
+        [property.id]: result.is_fraud,
+      }));
+    } catch (error) {
+      console.error("Error fetching fraud prediction:", error);
+    }
+  };
+
+  // Function to map Firebase property data to the predict route payload
+  const mapPropertyToPredictPayload = (property) => {
+    const now = new Date();
+    const timestamp = now.toISOString();
+
+    return {
+      property_type: property.propertyType || "unknown",
+      area_sqft: property.area || 0,
+      location: property.location || "unknown",
+      amenities: property.amenities || "",
+      nearby_landmarks: property.nearbyLandmarks || "",
+      has_extract7_12: !!property.documents?.extract7_12,
+      has_mutation_certificate: !!property.documents?.mutationCertificate,
+      has_property_tax_receipt: !!property.documents?.propertyTaxReceipt,
+      has_sale_deed: !!property.documents?.saleDeed,
+      legal_compliance_complete: !!property.legalCompliance,
+      price: property.price || 0,
+      price_change_percent: 0, // Placeholder, replace with actual data if available
+      transaction_speed_days: calculateDaysOnMarket(property.createdAt),
+      multiple_transaction_30days: false, // Placeholder
+      seller_previous_fraud: false, // Placeholder
+    };
+  };
+
+  // Helper function to calculate days on market
+  const calculateDaysOnMarket = (createdAt) => {
+    if (!createdAt?.seconds) return 0;
+    const createdDate = new Date(createdAt.seconds * 1000);
+    const now = new Date();
+    const diffTime = Math.abs(now - createdDate);
+    return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  };
+
   const handleUpdateStatus = async (id, isApproved, property) => {
     try {
       if (isApproved) {
@@ -39,21 +101,21 @@ console.log(properties)
           property_type: property.propertyType,
           price: property.price,
         };
-  
+
         // Post to the Genesis Ledger API
         const response = await fetch("http://127.0.0.1:8000/ledgers/create-genesis/", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
         });
-  
+
         if (!response.ok) throw new Error("Failed to post to ledger");
-  
+
         const result = await response.json();
-  
+
         if (result.message === "Genesis block created successfully") {
           alert("Property successfully posted to ledger ✅");
-  
+
           // Update Firestore after successful ledger creation
           const propertyRef = doc(db, "PropertyData", id);
           await updateDoc(propertyRef, {
@@ -61,7 +123,7 @@ console.log(properties)
             DLID: payload.dlid,
             updatedAt: new Date(),
           });
-  
+
           setPendingProperties((prev) => prev.filter((p) => p.id !== id));
         } else {
           alert("Failed to post to ledger. Property not approved.");
@@ -70,7 +132,7 @@ console.log(properties)
         // Reject property without sending to ledger
         const propertyRef = doc(db, "PropertyData", id);
         await updateDoc(propertyRef, { Approved: false });
-  
+
         setPendingProperties((prev) => prev.filter((p) => p.id !== id));
         alert("Property rejected.");
       }
@@ -79,14 +141,12 @@ console.log(properties)
       alert("Failed to update property status.");
     }
   };
-  
-  
 
   // Function to generate a unique DLID based on timestamp
   const generateDLID = () => {
     const now = new Date();
-    const year = now.getFullYear().toString().slice(-2); 
-    const month = (now.getMonth() + 1).toString().padStart(2, "0"); 
+    const year = now.getFullYear().toString().slice(-2);
+    const month = (now.getMonth() + 1).toString().padStart(2, "0");
     const date = now.getDate().toString().padStart(2, "0");
     const hours = now.getHours().toString().padStart(2, "0");
     const minutes = now.getMinutes().toString().padStart(2, "0");
@@ -95,31 +155,6 @@ console.log(properties)
 
     return `DL${year}${month}${date}${hours}${minutes}${seconds}${milliseconds}`;
   };
-
-  
-  // const handleUpdateStatus = async (id, isApproved) => {
-  //   try {
-  //     const propertyRef = doc(db, "PropertyData", id);
-  //     const updateData = {
-  //       Approved: isApproved,
-  //       updatedAt: new Date(),
-  //     };
-
-  //     if (isApproved) {
-  //       updateData.DLID = generateDLID(); // Assign unique DLID on approval
-  //     }
-
-  //     await updateDoc(propertyRef, updateData);
-
-      
-  //     setPendingProperties((prev) => prev.filter((property) => property.id !== id));
-
-  //     alert(`Property ${isApproved ? "approved" : "rejected"}!`);
-  //   } catch (error) {
-  //     console.error("Error updating status:", error);
-  //     alert("Failed to update property status.");
-  //   }
-  // };
 
   return (
     <div className="space-y-6 p-6 md:p-8 lg:p-10 xl:p-12">
@@ -177,21 +212,36 @@ console.log(properties)
                     </p>
                   </div>
 
+                  {/* Fraud Prediction */}
+                  {fraudPredictions[property.id] && (
+                    <div className="flex items-center gap-4">
+                      <p className="text-muted-foreground">
+                        Fraud Prediction:{" "}
+                        <span
+                          className={`font-semibold ${
+                            fraudPredictions[property.id][0] ? "text-red-600" : "text-green-600"
+                          }`}
+                        >
+                          {fraudPredictions[property.id][0] ? "Fraudulent" : "Legitimate"} (
+                          {(fraudPredictions[property.id][1] * 100).toFixed(2)}%)
+                        </span>
+                      </p>
+                    </div>
+                  )}
+
                   {/* Actions */}
                   <div className="flex justify-end gap-4">
                     <Button variant="outline" asChild>
                       <Link to={`/property/${property.id}`}>View Details</Link>
                     </Button>
                     <Button
-  variant="default"
-  className="bg-green-600 hover:bg-green-700"
-  onClick={() => handleUpdateStatus(property.id, true, property)}
->
-  <CheckCircle className="mr-2 h-5 w-5" />
-  Approve
-</Button>
-
-
+                      variant="default"
+                      className="bg-green-600 hover:bg-green-700"
+                      onClick={() => handleUpdateStatus(property.id, true, property)}
+                    >
+                      <CheckCircle className="mr-2 h-5 w-5" />
+                      Approve
+                    </Button>
                     <Button
                       variant="destructive"
                       className="bg-red-600 hover:bg-red-700"

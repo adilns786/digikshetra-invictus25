@@ -93,46 +93,59 @@ const Content = () => {
             <Route path="profile" element={<ProfileManagement />} />
             <Route path="help" element={<HelpSupport />} />
           </Route>
-<Route path='/lawyer' element={<LawyerDashboard/>}/>
-        <Route path="/landowner" element={<LandOwnerPage />}>
-          <Route index element={<Dashboard />} />
-          <Route path="properties" element={<PropertyListings />} />
-          <Route path="properties/new/media/:id" element={<ImageUpload />} />
-          <Route path="properties/new" element={<AddNewProperty />} />
-          <Route path="inquiries" element={<Inquiries />} />
-          <Route path="profile" element={<ProfileManagement />} />
-          <Route path="help" element={<HelpSupport />} />
-        </Route>
-        <Route path="/gov" element={<PrivateRoute role="Register Officer"><LandOwnerPage /></PrivateRoute>}>
-          <Route index element={<GovernmentDashboard/>} />
-          <Route path="verify-properties" element={<VerifyProperties />} />
-          <Route path="verified-properties" element={<VerifiedProperties />} />
-          <Route path="Verify-transactions" element={<VerifyTransactions />} />
-          
-          <Route path="properties/new" element={<AddNewProperty />} />
-          <Route path="inquiries" element={<Inquiries />} />
-          <Route path="profile" element={<ProfileManagement />} />
-          <Route path="help" element={<HelpSupport />} />
-        </Route>
-        {/* Buyer Routes */}
-        <Route path="landowner/buyer" element={<BuyerDashboard />} />
-        <Route path="/buyer/search" element={<SearchProperties />} />
-        <Route path="/landowner/favorites" element={<Favorites />} />
-        <Route path="/property/:id" element={<PropertyDetails />} />
-        <Route path="/landowner/calculator" element={<MortgageCalculator />} />
-        <Route path="/landowner/reviews" element={<ReviewsAndRatings />} />
+          <Route path="/lawyer" element={<LawyerDashboard />} />
+          <Route path="/landowner" element={<LandOwnerPage />}>
+            <Route index element={<Dashboard />} />
+            <Route path="properties" element={<PropertyListings />} />
+            <Route path="properties/new/media/:id" element={<ImageUpload />} />
+            <Route path="properties/new" element={<AddNewProperty />} />
+            <Route path="inquiries" element={<Inquiries />} />
+            <Route path="profile" element={<ProfileManagement />} />
+            <Route path="help" element={<HelpSupport />} />
+          </Route>
+          <Route
+            path="/gov"
+            element={
+              <PrivateRoute role="Register Officer">
+                <LandOwnerPage />
+              </PrivateRoute>
+            }
+          >
+            <Route index element={<GovernmentDashboard />} />
+            <Route path="verify-properties" element={<VerifyProperties />} />
+            <Route
+              path="verified-properties"
+              element={<VerifiedProperties />}
+            />
+            <Route
+              path="Verify-transactions"
+              element={<VerifyTransactions />}
+            />
 
-        <Route path="/map" element={<MapPlotting/>}/>
+            <Route path="properties/new" element={<AddNewProperty />} />
+            <Route path="inquiries" element={<Inquiries />} />
+            <Route path="profile" element={<ProfileManagement />} />
+            <Route path="help" element={<HelpSupport />} />
+          </Route>
+          {/* Buyer Routes */}
+          <Route path="landowner/buyer" element={<BuyerDashboard />} />
+          <Route path="/buyer/search" element={<SearchProperties />} />
+          <Route path="/landowner/favorites" element={<Favorites />} />
+          <Route path="/property/:id" element={<PropertyDetails />} />
+          <Route
+            path="/landowner/calculator"
+            element={<MortgageCalculator />}
+          />
+          <Route path="/landowner/reviews" element={<ReviewsAndRatings />} />
 
-{/* Ledger Routes */}
-<Route path="ledger" element={<Ledger />} />
+          <Route path="/map" element={<MapPlotting />} />
+
+          {/* Ledger Routes */}
+          <Route path="ledger" element={<Ledger />} />
           <Route path="/blockchain-details/:dlid" element={<BlockDetails />} />
-        
-        {/* <Toaster /> */}
-      </Routes>
-   
 
-          
+          {/* <Toaster /> */}
+        </Routes>
       </div>
     </SidebarProvider>
   );
