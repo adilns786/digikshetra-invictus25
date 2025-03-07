@@ -1,17 +1,33 @@
 # Core Django
 Django==5.1.6
 
+# Django REST Framework
 djangorestframework==3.15.2
 
+# Redis for caching
+redis==5.2.1
+
+# Scikit-learn for machine learning
 scikit-learn==1.6.1
 
+# Pandas for data manipulation
+pandas==2.2.3
+
+# NumPy for numerical computations
+numpy==2.2.3
+
+# Django CORS Headers
 django-cors-headers==4.7.0
 
+# Gunicorn for production deployment
 gunicorn==23.0.0
 
 # Environment variables
 python-dotenv==1.0.1
 
-# Additional dependencies (if needed)
-pandas==2.2.3
-numpy==2.2.3
+# UUID for unique identifiers
+uuid==1.30
+
+# Additional dependencies
+requests==2.32.3  # For making HTTP requests
+python-dateutil==2.9.0.post0  # For date manipulation
