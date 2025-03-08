@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Edit, MapPin, PlusCircle, Trash2, Search } from "lucide-react";
 import { db } from "../../Firebase/config";
 import { collection, getDocs, deleteDoc, doc } from "firebase/firestore";
+import config from '../../config';
 
 export default function PropertyListings() {
   const [properties, setProperties] = useState([]);
@@ -31,7 +32,7 @@ export default function PropertyListings() {
   useEffect(() => {
     const fetchBlockchainData = async () => {
       try {
-        const response = await fetch("http://127.0.0.1:8000/ledgers/blockchain/");
+        const response = await fetch(`${config.apiBaseUrl}/ledgers/blockchain/`);
         const data = await response.json();
         console.log(data.blockchain);
   

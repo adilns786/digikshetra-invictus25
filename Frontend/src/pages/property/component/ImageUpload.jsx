@@ -5,6 +5,7 @@ import { useParams } from "react-router-dom";
 import { db } from "../../../Firebase/config"; // Update import path
 import { doc, updateDoc } from "firebase/firestore";
 import { useState } from "react";
+import config from '../../../config';
 
 const ImageUpload = () => {
   const { id } = useParams(); // Extract property ID from the URL
@@ -70,7 +71,7 @@ const ImageUpload = () => {
     formData.append("type", type); // Append the upload type
     console.log(documents)
     try {
-      const response = await fetch(`http://localhost:8000/api/upload/`, {
+      const response = await fetch(`${config.apiBaseUrl}/api/upload/`, {
         method: "POST",
         body: formData,
       });
