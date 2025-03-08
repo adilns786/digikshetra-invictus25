@@ -92,6 +92,8 @@ import React, { useState, useEffect } from "react";
 import { db } from "../../Firebase/config";
 import { collection, getDocs, doc, updateDoc } from "firebase/firestore";
 import { Button } from "@/components/ui/button";
+import config from '../../config';
+
 
 const VerifyTransactions = () => {
   const [transactions, setTransactions] = useState([]);
@@ -144,7 +146,7 @@ const VerifyTransactions = () => {
         amount: transaction.price,
       };
       try {
-        await fetch("http://127.0.0.1:8000/ledgers/add-transaction/", {
+        await fetch(`${config.apiBaseUrl}/ledgers/add-transaction/`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

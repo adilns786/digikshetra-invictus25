@@ -6,6 +6,7 @@ import { db } from "../../Firebase/config";
 import { doc, setDoc } from "firebase/firestore";
 import { TextField, Button, MenuItem } from "@mui/material";
 import { Person, Email, Lock, LocationOn, Phone, Gavel } from "@mui/icons-material";
+import config from '../../config';
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -45,7 +46,7 @@ const Signup = () => {
     };
 
     try {
-      const response = await fetch("http://localhost:8000/api-auth/verify/", {
+      const response = await fetch(`${config.apiBaseUrl}/api-auth/verify/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(verificationData),

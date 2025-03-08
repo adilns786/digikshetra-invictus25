@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { db } from "../../Firebase/config";
 import { collection, getDocs, doc, updateDoc } from "firebase/firestore";
+import config from '../../config';
 
 const VerifyProperties = () => {
   const [pendingProperties, setPendingProperties] = useState([]);
@@ -38,7 +39,7 @@ const VerifyProperties = () => {
     try {
       const payload = mapPropertyToPredictPayload(property);
 
-      const response = await fetch("http://localhost:8000/api/predict/", {
+      const response = await fetch(`${config.apiBaseUrl}/api/predict/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),

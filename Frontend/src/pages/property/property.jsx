@@ -34,6 +34,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { db } from "../../Firebase/config"; // Update import path
 import { doc, getDoc } from "firebase/firestore";
+import config from '../../config';
 
 export default function PropertyDetails() {
   const { id } = useParams();
@@ -86,7 +87,7 @@ export default function PropertyDetails() {
   useEffect(() => {
     const fetchBlockchainData = async () => {
       try {
-        const response = await fetch("http://127.0.0.1:8000/ledgers/blockchain/");
+        const response = await fetch(`${config.apiBaseUrl}/ledgers/blockchain/`);
         const data = await response.json();
         if (data.blockchain) {
           setBlockchainData(data.blockchain.flat());

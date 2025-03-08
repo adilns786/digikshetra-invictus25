@@ -11,6 +11,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"; // Import shadcn components
 import { Button } from "@/components/ui/button"; // Import shadcn button
+import config from '../../config';
 
 // Error Boundary Component for catching errors
 class ErrorBoundary extends React.Component {
@@ -57,7 +58,7 @@ const BlockchainDetails = () => {
     const fetchLedgerData = async () => {
       try {
         const response = await fetch(
-          `http://127.0.0.1:8000/ledgers/get-ledger/${dlid}/`
+          `${config.apiBaseUrl}/ledgers/get-ledger/${dlid}/`
         );
         const data = await response.json();
 

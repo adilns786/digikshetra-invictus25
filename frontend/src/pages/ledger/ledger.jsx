@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom"; // Import Link and useNavigate for navigation
+import config from '../../config';
 
 // Navbar component
 const Navbar = () => (
@@ -24,7 +25,7 @@ export default function BlockchainProperties() {
     const fetchBlockchainData = async () => {
       try {
         const response = await fetch(
-          "http://127.0.0.1:8000/ledgers/blockchain/"
+          `${config.apiBaseUrl}/ledgers/blockchain/`
         );
         const data = await response.json();
         if (data.blockchain) {
