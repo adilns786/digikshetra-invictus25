@@ -60,7 +60,7 @@ const BlockchainDetails = () => {
           `http://127.0.0.1:8000/ledgers/get-ledger/${dlid}/`
         );
         const data = await response.json();
-
+console.log(data.ledger)
         if (data && Array.isArray(data.ledger)) {
           setLedger(data.ledger);
         } else {
@@ -212,10 +212,10 @@ const BlockchainDetails = () => {
                 ) : (
                   <div className="space-y-1">
                     <p>
-                      <strong>Sender:</strong> {block.sender}
+                      <strong>Sender:</strong> {block.buyer}
                     </p>
                     <p>
-                      <strong>Receiver:</strong> {block.receiver}
+                      <strong>Receiver:</strong> {block.seller}
                     </p>
                     <p>
                       <strong>Amount:</strong> ${block.amount}

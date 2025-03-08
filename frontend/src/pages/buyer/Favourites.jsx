@@ -99,39 +99,47 @@
 //     </div>
 //   );
 // }
+
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Heart, MapPin, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
+import { db } from "../../Firebase/config";
+import { doc, getDoc } from "firebase/firestore";
 
-export default function Favorites() {
-  const [favorites, setFavorites] = useState([]);
-  const [savedSearches, setSavedSearches] = useState([]);
-
-  useEffect(() => {
-    // Fetch favorites and saved searches from DB
-    fetch("/api/favorites")
-      .then(res => res.json())
-      .then(data => setFavorites(data))
-      .catch(error => console.error("Error fetching favorites:", error));
-    
-    fetch("/api/saved-searches")
-      .then(res => res.json())
-      .then(data => setSavedSearches(data))
-      .catch(error => console.error("Error fetching saved searches:", error));
-  }, []);
-
-  const removeFavorite = (id) => {
-    setFavorites(favorites.filter(property => property.id !== id));
-    fetch(`/api/favorites/${id}`, { method: "DELETE" });
-  };
+export default function SavedProperties() {
+  const [savedProperties, setSavedProperties] = useState([]);
+  const username = sessionStorage.getItem("name");
 
   const clearAllFavorites = () => {
-    setFavorites([]);
+   
     fetch("/api/favorites", { method: "DELETE" });
   };
+
+  useEffect(() => {
+    const fetchSavedProperties = async () => {
+      if (!username) return;
+      try {
+        const userDoc = await getDoc(doc(db, "SavedProperties", username));
+        if (userDoc.exists()) {
+          const savedIds = userDoc.data().saved || [];
+          const fetchedProperties = [];
+
+          for (let id of savedIds) {
+            const propertyDoc = await getDoc(doc(db, "PropertyData", id));
+            if (propertyDoc.exists()) {
+              fetchedProperties.push({ id: propertyDoc.id, ...propertyDoc.data() });
+            }
+          }
+
+          setSavedProperties(fetchedProperties);
+        }
+      } catch (error) {
+        console.error("Error fetching saved properties:", error);
+      }
+    };
+    fetchSavedProperties();
+  }, [username]);
 
   return (
     <div className="container mx-auto px-4 py-6 space-y-6">
@@ -151,73 +159,37 @@ export default function Favorites() {
         </Button>
       </div>
 
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {favorites.map((property) => (
-          <Card key={property.id} className="overflow-hidden shadow-lg rounded-lg">
-            <div className="relative aspect-video w-full bg-gray-200">
-              <img src={property.image} alt={property.name} className="w-full h-full object-cover" />
-              <Button
-                variant="ghost"
-                size="icon"
-                className="absolute top-2 right-2 h-10 w-10 bg-white/80 text-pink-500 hover:bg-white/90 hover:text-pink-600 rounded-full"
-                onClick={() => removeFavorite(property.id)}
-              >
-                <Heart className="h-6 w-6" fill="currentColor" />
-              </Button>
+      
+      <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        {savedProperties.map((property) => (
+          <div key={property.id} className="rounded-lg overflow-hidden bg-white shadow-lg hover:shadow-xl transform transition-all duration-300 hover:-translate-y-2">
+            <div className="relative">
+              <img src={property.propertyImages?.[0] || "https://source.unsplash.com/400x300/?house"} alt={property.title} className="w-full h-56 object-cover" />
+              <button className="absolute top-4 right-4 bg-pink-500 text-white p-3 rounded-full shadow transition">
+                <Heart className="h-5 w-5" />
+              </button>
             </div>
-            <CardHeader className="p-5">
-              <CardTitle className="text-xl font-semibold truncate">{property.name}</CardTitle>
-              <CardDescription className="flex items-center text-gray-600 mt-1">
-                <MapPin className="mr-1 h-4 w-4" />
-                {property.location}
-              </CardDescription>
-            </CardHeader>
-            <Separator />
-            <CardContent className="p-5">
-              <div className="grid grid-cols-3 gap-4 text-center">
-                <div>
-                  <p className="text-sm font-medium text-gray-500">Price</p>
-                  <p className="text-lg font-bold">${property.price.toLocaleString()}</p>
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-gray-500">Area</p>
-                  <p className="text-lg font-bold">{property.area} sqft</p>
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-gray-500">Type</p>
-                  <p className="text-lg font-bold">{property.type}</p>
-                </div>
+            <div className="p-6">
+              <h3 className="text-xl font-bold text-gray-900">{property.title || "No Title"}</h3>
+              <p className="text-gray-600 flex items-center text-lg mt-2">
+                <MapPin className="h-5 w-5 mr-2 text-blue-500" />
+                {property.location || "Unknown Location"}
+              </p>
+              <div className="mt-4 flex justify-between text-lg font-semibold text-gray-800">
+                <p className="text-blue-600">${property.price?.toLocaleString() || 0}</p>
+                <p>{property.area || 0} sqft</p>
               </div>
-              <div className="mt-6 flex justify-center">
-                <Button asChild className="px-6 py-2 text-lg">
-                  <Link to={`/buyer/property/${property.id}`}>View Details</Link>
-                </Button>
+              <div className="mt-6">
+                <Link
+                  to={`/property/${property.id}`}
+                  className="block py-3 text-center bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition shadow"
+                >
+                  View Details
+                </Link>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         ))}
-      </div>
-
-      <div className="mt-12">
-        <h3 className="text-2xl font-semibold mb-4">Saved Searches</h3>
-        <div className="space-y-6">
-          {savedSearches.map((search, i) => (
-            <Card key={i} className="flex items-center justify-between p-5 shadow-md rounded-lg">
-              <div className="flex-1">
-                <p className="text-lg font-medium">{search}</p>
-                <p className="text-sm text-gray-500">Last updated {i + 1} day{i !== 0 ? "s" : ""} ago</p>
-              </div>
-              <div className="flex gap-4">
-                <Button variant="outline" size="lg" asChild>
-                  <Link to="/buyer/search">Run Search</Link>
-                </Button>
-                <Button variant="ghost" size="lg" className="text-destructive flex items-center">
-                  <Trash2 className="h-5 w-5" />
-                </Button>
-              </div>
-            </Card>
-          ))}
-        </div>
       </div>
     </div>
   );

@@ -50,7 +50,7 @@ export default function PropertyDetails() {
       try {
         const propertyRef = doc(db, "PropertyData", id);
         const propertyDoc = await getDoc(propertyRef);
-
+console.log(propertyDoc.data());
         if (propertyDoc.exists()) {
           setProperty(propertyDoc.data());
         } else {
@@ -137,6 +137,7 @@ export default function PropertyDetails() {
     images = [],
     features = [],
     amenities = [],
+    nearbyLandmarks = "None specified",
     agent = {
       name: "Unknown Agent",
       phone: "Not provided",
@@ -264,14 +265,14 @@ export default function PropertyDetails() {
                     <Bed className="h-4 w-4 mr-1" />
                     <span className="text-sm">Bedrooms</span>
                   </div>
-                  <p className="font-bold">{bedrooms}</p>
+                  <p className="font-bold">3</p>
                 </div>
                 <div className="flex flex-col items-center">
                   <div className="flex items-center text-muted-foreground mb-1">
                     <Bath className="h-4 w-4 mr-1" />
                     <span className="text-sm">Bathrooms</span>
                   </div>
-                  <p className="font-bold">{bathrooms}</p>
+                  <p className="font-bold">2</p>
                 </div>
                 <div className="flex flex-col items-center">
                   <div className="flex items-center text-muted-foreground mb-1">
@@ -322,7 +323,7 @@ export default function PropertyDetails() {
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Year Built</p>
-                  <p className="font-medium">{yearBuilt}</p>
+                  <p className="font-medium">2019</p>
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Area</p>
@@ -330,11 +331,11 @@ export default function PropertyDetails() {
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Bedrooms</p>
-                  <p className="font-medium">{bedrooms}</p>
+                  <p className="font-medium">3</p>
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Bathrooms</p>
-                  <p className="font-medium">{bathrooms}</p>
+                  <p className="font-medium">2</p>
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Last Updated</p>
@@ -346,7 +347,7 @@ export default function PropertyDetails() {
 
               <h2 className="text-2xl font-bold mb-4">Description</h2>
               <div className="space-y-4 mb-8">
-                <p className="leading-relaxed whitespace-pre-line">{longDescription}</p>
+                <p className="leading-relaxed whitespace-pre-line">{description}</p>
               </div>
             </div>
 
@@ -359,10 +360,10 @@ export default function PropertyDetails() {
                       <AvatarFallback>{agent.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
                     </Avatar>
                     <div>
-                      <h3 className="font-bold">{agent.name}</h3>
+                      <h3 className="font-bold">Rahul Singh</h3>
                       <div className="flex items-center text-sm text-muted-foreground">
                         <Star className="h-3 w-3 fill-yellow-500 text-yellow-500 mr-1" />
-                        <span>{agent.rating} ({agent.reviews} reviews)</span>
+                        <span>4 (10 reviews)</span>
                       </div>
                     </div>
                   </div>
@@ -370,15 +371,15 @@ export default function PropertyDetails() {
                   <div className="space-y-3">
                     <div className="flex items-center">
                       <Phone className="h-4 w-4 mr-2 text-primary" />
-                      <span>{agent.phone}</span>
+                      <span>985462317</span>
                     </div>
                     <div className="flex items-center">
                       <Mail className="h-4 w-4 mr-2 text-primary" />
-                      <span>{agent.email}</span>
+                      <span>agent.rahul@gmail.com</span>
                     </div>
                     <div className="flex items-center">
                       <Globe className="h-4 w-4 mr-2 text-primary" />
-                      <span>{agent.listings} active listings</span>
+                      <span>5 active listings</span>
                     </div>
                   </div>
                   <Separator className="my-4" />
@@ -398,7 +399,37 @@ export default function PropertyDetails() {
             </div>
           </div>
         </TabsContent>
+ {/* Features & Amenities Tab */}
+ <TabsContent value="features">
+        <h2 className="text-2xl font-bold mb-4">Features & Amenities</h2>
+        <p className="text-lg">Nearby Landmarks: {nearbyLandmarks || "None specified"}</p>
+        <p className="text-lg">{amenities || "No amenities listed"}</p>
+      </TabsContent>
 
+      {/* Location Tab */}
+      <TabsContent value="location">
+        <h2 className="text-2xl font-bold mb-4">Location</h2>
+        {/* <p className="text-lg">Coordinates: {coordinates || "Not provided"}</p> */}
+        <p className="text-lg">Nearby Landmarks: {nearbyLandmarks
+ || "None specified"}</p>
+      </TabsContent>
+
+      <TabsContent value="contact">
+      <h2 className="text-2xl font-bold mb-4">Documents</h2>
+        <ul className="space-y-2">
+          {documents ? (
+            Object.entries(documents).map(([key, url]) => (
+              <li key={key} className="text-blue-500 underline">
+                <a href={url} target="_blank" rel="noopener noreferrer">
+                  {key.replace(/([A-Z])/g, " $1").trim()}
+                </a>
+              </li>
+            ))
+          ) : (
+            <p>No documents available</p>
+          )}
+        </ul>
+        </TabsContent>
         {/* Other tabs (features, location, contact) */}
         {/* ... (rest of the code remains the same) ... */}
       </Tabs>

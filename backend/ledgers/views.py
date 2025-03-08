@@ -14,22 +14,84 @@ redis_client = redis.StrictRedis(
     decode_responses=True
 )
 
+# @csrf_exempt
+# def create_genesis_block(request):
+#     if request.method == 'POST':
+#         try:
+#             # Parse the incoming JSON data
+#             data = json.loads(request.body)
+            
+#             dlid = data.get('dlid')
+#             area = data.get('area')
+#             owner_name = data.get('owner_name')
+#             landmark = data.get('landmark')
+#             property_type = data.get('property_type')
+#             price = data.get('price')
+            
+#             if not dlid or not area or not owner_name or not landmark or not property_type or not price:
+#                 return JsonResponse({'error': 'Missing required fields'}, status=400)
+
+#             # Check if the ledger already exists
+#             if redis_client.exists(f"ledger:{dlid}"):
+#                 return JsonResponse({'error': 'Ledger already exists for this DLID'}, status=400)
+
+#             # Create the genesis block
+#             genesis_block = {
+#                 "dlid": dlid,
+#                 "area": area,
+#                 "owner_name": owner_name,
+#                 "landmark": landmark,
+#                 "property_type": property_type,
+#                 "price": price,
+#                 "timestamp": str(datetime.datetime.now())
+#             }
+
+#             # Store the genesis block in Redis
+#             redis_client.set(f"ledger:{dlid}", json.dumps([genesis_block]))
+
+#             return JsonResponse({'message': 'Genesis block created successfully'}, status=200)
+
+#         except json.JSONDecodeError:
+#             return JsonResponse({'error': 'Invalid JSON'}, status=400)
+
+#     else:
+#         return JsonResponse({'error': 'Invalid request method'}, status=405)
+
 @csrf_exempt
 def create_genesis_block(request):
     if request.method == 'POST':
         try:
-            # Parse the incoming JSON data
+            print("Incoming Request Body:", request.body)  # Debugging
+
             data = json.loads(request.body)
             
+            # Extract required fields
             dlid = data.get('dlid')
             area = data.get('area')
             owner_name = data.get('owner_name')
-            landmark = data.get('landmark')
+            landmark = data.get('nearby_landmarks')  # Changed to match frontend
             property_type = data.get('property_type')
             price = data.get('price')
-            
-            if not dlid or not area or not owner_name or not landmark or not property_type or not price:
-                return JsonResponse({'error': 'Missing required fields'}, status=400)
+
+            # Extract optional fields
+            title = data.get('title')
+            location = data.get('location')
+            owner_email = data.get('owner_email')
+            owner_phone = data.get('owner_phone')
+            amenities = data.get('amenities', [])
+            legal_compliance = data.get('legal_compliance', [])
+            ownership_history = data.get('ownership_history', [])
+            restrictions = data.get('restrictions', [])
+            metadata = data.get('metadata', {})
+            coordinates = data.get('coordinates', {})
+            description = data.get('description')
+            property_images = data.get('property_images', [])
+            documents = data.get('documents', {})
+
+            # Check for missing required fields
+            missing_fields = [key for key in ["dlid", "area", "owner_name", "property_type", "price"] if not data.get(key)]
+            if missing_fields:
+                return JsonResponse({'error': f'Missing fields: {", ".join(missing_fields)}'}, status=400)
 
             # Check if the ledger already exists
             if redis_client.exists(f"ledger:{dlid}"):
@@ -38,24 +100,37 @@ def create_genesis_block(request):
             # Create the genesis block
             genesis_block = {
                 "dlid": dlid,
+                "title": title,
+                "location": location,
+                "Approved": True,
                 "area": area,
                 "owner_name": owner_name,
-                "landmark": landmark,
+                "owner_email": owner_email,
+                "owner_phone": owner_phone,
                 "property_type": property_type,
                 "price": price,
+                "amenities": amenities,
+                "nearby_landmarks": landmark,
+                "legal_compliance": legal_compliance,
+                "ownership_history": ownership_history,
+                "restrictions": restrictions,
+                "metadata": metadata,
+                "coordinates": coordinates,
+                "description": description,
+                "property_images": property_images,
+                "documents": documents,
                 "timestamp": str(datetime.datetime.now())
             }
 
-            # Store the genesis block in Redis
+            # Store in Redis
             redis_client.set(f"ledger:{dlid}", json.dumps([genesis_block]))
 
             return JsonResponse({'message': 'Genesis block created successfully'}, status=200)
 
         except json.JSONDecodeError:
-            return JsonResponse({'error': 'Invalid JSON'}, status=400)
+            return JsonResponse({'error': 'Invalid JSON format'}, status=400)
 
-    else:
-        return JsonResponse({'error': 'Invalid request method'}, status=405)
+    return JsonResponse({'error': 'Invalid request method'}, status=405)
 
 @csrf_exempt
 def add_transaction(request):

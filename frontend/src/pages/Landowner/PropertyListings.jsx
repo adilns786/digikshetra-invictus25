@@ -28,21 +28,26 @@ export default function PropertyListings() {
     fetchProperties();
   }, []);
 
-  // Fetch blockchain properties
   useEffect(() => {
     const fetchBlockchainData = async () => {
       try {
         const response = await fetch("http://127.0.0.1:8000/ledgers/blockchain/");
         const data = await response.json();
+        console.log(data.blockchain);
+  
         if (data.blockchain) {
-          setBlockchainData(data.blockchain.flat());
+          // Filter only approved properties
+          const approvedProperties = data.blockchain.flat().filter(property => property.Approved === true);
+          setBlockchainData(approvedProperties);
         }
       } catch (error) {
         console.error("Error fetching blockchain data:", error);
       }
     };
+  
     fetchBlockchainData();
   }, []);
+  
 
   // Filter Firebase properties based on search
   const filteredProperties = properties.filter(
@@ -98,7 +103,7 @@ export default function PropertyListings() {
 
       {/* Firebase Properties Section */}
       <div>
-        <h3 className="text-2xl font-semibold text-gray-700 mb-4">🌍 Properties from Firebase</h3>
+        <h3 className="text-2xl font-semibold text-gray-700 mb-4">🌍 Properties </h3>
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {filteredProperties.length > 0 ? (
             filteredProperties.map((property) => (

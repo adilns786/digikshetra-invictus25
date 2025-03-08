@@ -89,58 +89,130 @@ const VerifyProperties = () => {
     return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
   };
 
-  const handleUpdateStatus = async (id, isApproved, property) => {
-    try {
-      if (isApproved) {
-        // Prepare required fields for the Genesis block API
-        const payload = {
-          dlid: generateDLID(), // Generate unique DLID
-          area: property.area,
-          owner_name: property.contactName, // Mapping contact name as owner name
-          landmark: property.nearbyLandmarks,
-          property_type: property.propertyType,
-          price: property.price,
-        };
+  // const handleUpdateStatus = async (id, isApproved, property) => {
+  //   try {
+  //     if (isApproved) {
+  //       // Prepare required fields for the Genesis block API
+  //       const payload = {
+  //         dlid: generateDLID(), // Generate unique DLID
+  //         area: property.area,
+  //         owner_name: property.contactName, // Mapping contact name as owner name
+  //         landmark: property.nearbyLandmarks,
+  //         property_type: property.propertyType,
+  //         price: property.price,
+  //       };
 
-        // Post to the Genesis Ledger API
-        const response = await fetch("http://127.0.0.1:8000/ledgers/create-genesis/", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
+  //       // Post to the Genesis Ledger API
+  //       const response = await fetch("http://127.0.0.1:8000/ledgers/create-genesis/", {
+  //         method: "POST",
+  //         headers: { "Content-Type": "application/json" },
+  //         body: JSON.stringify(payload),
+  //       });
+
+  //       if (!response.ok) throw new Error("Failed to post to ledger");
+
+  //       const result = await response.json();
+
+  //       if (result.message === "Genesis block created successfully") {
+  //         alert("Property successfully posted to ledger ✅");
+
+  //         // Update Firestore after successful ledger creation
+  //         const propertyRef = doc(db, "PropertyData", id);
+  //         await updateDoc(propertyRef, {
+  //           Approved: true,
+  //           DLID: payload.dlid,
+  //           updatedAt: new Date(),
+  //         });
+
+  //         setPendingProperties((prev) => prev.filter((p) => p.id !== id));
+  //       } else {
+  //         alert("Failed to post to ledger. Property not approved.");
+  //       }
+  //     } else {
+  //       // Reject property without sending to ledger
+  //       const propertyRef = doc(db, "PropertyData", id);
+  //       await updateDoc(propertyRef, { Approved: false });
+  //     }
+  //     }
+  //     catch (error) {
+  //       console.error("Error updating status:", error);
+  //       alert("Failed to update property status.");
+  //     }
+  //   };
+
+  
+  const handleUpdateStatus = async (id, isApproved, property) => {
+  try {
+    if (isApproved) {
+      // Prepare full payload for the Genesis Ledger API
+      const payload = {
+        dlid: generateDLID(), // Generate unique DLID
+        title: property.title,
+        location: property.location,
+        area: property.area,
+        owner_name: property.contactName,
+        owner_email: property.contactEmail,
+        owner_phone: property.contactPhone,
+        property_type: property.propertyType,
+        price: property.price,
+        amenities: property.amenities,
+        nearby_landmarks: property.nearbyLandmarks,
+        legal_compliance: property.legalCompliance,
+        ownership_history: property.ownershipHistory,
+        restrictions: property.restrictions,
+        metadata: property.metadata,
+        coordinates: property.coordinates,
+        description: property.description,
+        property_images: property.propertyImages, // Array of images
+        documents: {
+          extract7_12: property.documents?.extract7_12,
+          mutationCertificate: property.documents?.mutationCertificate,
+          propertyTaxReceipt: property.documents?.propertyTaxReceipt,
+          saleDeed: property.documents?.saleDeed,
+        },
+      };
+
+      // Send property data to the Genesis Ledger API
+      const response = await fetch("http://127.0.0.1:8000/ledgers/create-genesis/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) throw new Error("Failed to post to ledger");
+
+      const result = await response.json();
+
+      if (result.message === "Genesis block created successfully") {
+        alert("Property successfully posted to blockchain ✅");
+
+        // Update Firestore after successful ledger entry
+        const propertyRef = doc(db, "PropertyData", id);
+        await updateDoc(propertyRef, {
+          Approved: true,
+          DLID: payload.dlid, // Store DLID in Firestore
+          updatedAt: new Date(),
         });
 
-        if (!response.ok) throw new Error("Failed to post to ledger");
-
-        const result = await response.json();
-
-        if (result.message === "Genesis block created successfully") {
-          alert("Property successfully posted to ledger ✅");
-
-          // Update Firestore after successful ledger creation
-          const propertyRef = doc(db, "PropertyData", id);
-          await updateDoc(propertyRef, {
-            Approved: true,
-            DLID: payload.dlid,
-            updatedAt: new Date(),
-          });
-
-          setPendingProperties((prev) => prev.filter((p) => p.id !== id));
-        } else {
-          alert("Failed to post to ledger. Property not approved.");
-        }
-      } else {
-        // Reject property without sending to ledger
-        const propertyRef = doc(db, "PropertyData", id);
-        await updateDoc(propertyRef, { Approved: false });
-
         setPendingProperties((prev) => prev.filter((p) => p.id !== id));
-        alert("Property rejected.");
+      } else {
+        alert("Failed to post to ledger. Property not approved.");
       }
-    } catch (error) {
-      console.error("Error updating status:", error);
-      alert("Failed to update property status.");
+    } else {
+      // Reject property without sending to ledger
+      const propertyRef = doc(db, "PropertyData", id);
+      await updateDoc(propertyRef, { Approved: false });
+
+      setPendingProperties((prev) => prev.filter((p) => p.id !== id));
+      alert("Property rejected.");
     }
-  };
+  
+  } catch (error) {
+    console.error("Error updating status:", error);
+    alert("Failed to update property status.");
+  }
+};
+
 
   // Function to generate a unique DLID based on timestamp
   const generateDLID = () => {
@@ -213,21 +285,17 @@ const VerifyProperties = () => {
                   </div>
 
                   {/* Fraud Prediction */}
-                  {fraudPredictions[property.id] && (
-                    <div className="flex items-center gap-4">
-                      <p className="text-muted-foreground">
-                        Fraud Prediction:{" "}
-                        <span
-                          className={`font-semibold ${
-                            fraudPredictions[property.id][0] ? "text-red-600" : "text-green-600"
-                          }`}
-                        >
-                          {fraudPredictions[property.id][0] ? "Fraudulent" : "Legitimate"} (
-                          {(fraudPredictions[property.id][1] * 100).toFixed(2)}%)
-                        </span>
-                      </p>
-                    </div>
-                  )}
+                  {fraudPredictions[property.id] && fraudPredictions[property.id][0] && (
+  <div className="flex items-center gap-4">
+    <p className="text-muted-foreground">
+      Fraud Prediction:{" "}
+      <span className="font-semibold text-red-600">
+        Fraudulent ({(fraudPredictions[property.id][1] * 100).toFixed(2)}%)
+      </span>
+    </p>
+  </div>
+)}
+
 
                   {/* Actions */}
                   <div className="flex justify-end gap-4">

@@ -27,6 +27,7 @@ export default function BlockchainProperties() {
           "http://127.0.0.1:8000/ledgers/blockchain/"
         );
         const data = await response.json();
+        console.log(data.blockchain);
         if (data.blockchain) {
           setBlockchainData(data.blockchain.flat());
         }
