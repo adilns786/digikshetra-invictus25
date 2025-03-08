@@ -136,7 +136,7 @@ const Login = () => {
       if (userData.password !== password) return alert("Incorrect password!");
 
       sessionStorage.setItem("email", email);
-      sessionStorage.setItem("role", role);
+      sessionStorage.setItem("role", userData.role);
       sessionStorage.setItem("name", userData.name);
       alert("Login successful!");
       navigate("/");
@@ -158,6 +158,25 @@ const Login = () => {
         <div className="md:w-1/2 p-8 flex flex-col justify-center">
           <h1 className="text-3xl font-bold text-gray-800">Welcome to DigiKshetra</h1>
           <p className="text-gray-600 mt-2">Secure & Transparent Land Records Management</p>
+          <div className="space-y-4">
+          <div className="bg-gray-50 p-4 rounded-lg">
+            <p className="text-gray-700">
+              <span className="font-semibold">User Login (for testing):</span>
+              <br />
+              <span className="text-sm">Email: adilns786@gmail.com</span>
+              <br />
+              <span className="text-sm">Password: 12345</span>
+            </p>
+            <p className="text-gray-700">
+              <span className="font-semibold">Gov Officer Login (for testing):</span>
+              <br />
+              <span className="text-sm">Email: testofficer@gmail.com</span>
+              <br />
+              <span className="text-sm">Password: 12345</span>
+            </p>
+          </div>
+        </div>
+         
           <form onSubmit={handleSubmit} className="mt-6 space-y-4">
             <input
               type="email"
